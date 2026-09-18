@@ -1,0 +1,516 @@
+/**
+ * Synthetic Demo Dataset Generator for CivicTrust Prototype
+ * Strictly labeled as Prototype/Synthetic Data (Non-government)
+ */
+
+const bcrypt = require('bcryptjs');
+const { calculateSlaDeadline } = require('./slaService');
+
+// High-quality SVG Data URIs representing realistic civic scenarios (Garbage, Pothole, Debris, Cleaned)
+const SAMPLE_IMAGES = {
+  garbage_before: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'%3E%3Crect width='600' height='400' fill='%2378350f'/%3E%3Cpath d='M0,280 Q150,220 300,280 T600,260 L600,400 L0,400 Z' fill='%23451a03'/%3E%3Ccircle cx='180' cy='290' r='45' fill='%23b45309'/%3E%3Crect x='240' y='260' width='80' height='60' rx='10' fill='%2315803d'/%3E%3Cpolygon points='340,320 390,250 440,320' fill='%230369a1'/%3E%3Ccircle cx='430' cy='280' r='30' fill='%23dc2626'/%3E%3Crect x='100' y='310' width='50' height='40' fill='%23eab308'/%3E%3Ctext x='300' y='60' font-family='sans-serif' font-size='22' font-weight='bold' fill='%23ffffff' text-anchor='middle'%3E⚠️ CIVICTRUST DEMO: OVERFLOWING GARBAGE DUMP%3C/text%3E%3Ctext x='300' y='95' font-family='sans-serif' font-size='14' fill='%23fef08a' text-anchor='middle'%3E[Simulated Civic Complaint Evidence Photo - Before]%3C/text%3E%3C/svg%3E",
+  
+  garbage_after_clean: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'%3E%3Crect width='600' height='400' fill='%230f172a'/%3E%3Crect x='0' y='220' width='600' height='180' fill='%23334155'/%3E%3Cline x1='0' y1='310' x2='600' y2='310' stroke='%23f8fafc' stroke-dasharray='30 20' stroke-width='6'/%3E%3Crect x='480' y='180' width='60' height='90' rx='8' fill='%2316a34a'/%3E%3Ctext x='510' y='230' font-family='sans-serif' font-size='24' font-weight='bold' fill='%23ffffff' text-anchor='middle'%3E♻️%3C/text%3E%3Ctext x='300' y='60' font-family='sans-serif' font-size='22' font-weight='bold' fill='%234ade80' text-anchor='middle'%3E✅ CIVICTRUST DEMO: COMPLETELY CLEARED AREA%3C/text%3E%3Ctext x='300' y='95' font-family='sans-serif' font-size='14' fill='%23cbd5e1' text-anchor='middle'%3E[Verified Clean Ground - High AI Confidence 94%]%3C/text%3E%3C/svg%3E",
+  
+  garbage_after_suspicious: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'%3E%3Crect width='600' height='400' fill='%23581c87'/%3E%3Crect x='0' y='240' width='600' height='160' fill='%233b0764'/%3E%3Ccircle cx='200' cy='280' r='40' fill='%23b45309'/%3E%3Crect x='250' y='270' width='70' height='50' fill='%2315803d'/%3E%3Ccircle cx='380' cy='300' r='35' fill='%23dc2626'/%3E%3Ctext x='300' y='60' font-family='sans-serif' font-size='22' font-weight='bold' fill='%23f87171' text-anchor='middle'%3E⚠️ CIVICTRUST DEMO: SUSPICIOUS RESOLUTION%3C/text%3E%3Ctext x='300' y='95' font-family='sans-serif' font-size='14' fill='%23fef08a' text-anchor='middle'%3E[Debris Residuals Still Present - Automated Flag 78%]%3C/text%3E%3C/svg%3E",
+
+  pothole_before: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'%3E%3Crect width='600' height='400' fill='%23334155'/%3E%3Cellipse cx='300' cy='270' rx='130' ry='70' fill='%230f172a'/%3E%3Cellipse cx='290' cy='275' rx='90' ry='40' fill='%23020617' stroke='%23475569' stroke-width='4'/%3E%3Cpath d='M220,260 Q270,300 360,250' stroke='%23e2e8f0' stroke-width='3' fill='none'/%3E%3Ctext x='300' y='60' font-family='sans-serif' font-size='22' font-weight='bold' fill='%23ffffff' text-anchor='middle'%3E⚠️ CIVICTRUST DEMO: SEVERE ROAD POTHOLE%3C/text%3E%3Ctext x='300' y='95' font-family='sans-serif' font-size='14' fill='%23fef08a' text-anchor='middle'%3E[Hazardous Pothole - 48h SLA Benchmark]%3C/text%3E%3C/svg%3E",
+
+  pothole_after_clean: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'%3E%3Crect width='600' height='400' fill='%23334155'/%3E%3Cellipse cx='300' cy='270' rx='140' ry='75' fill='%231e293b' stroke='%23059669' stroke-width='5'/%3E%3Cline x1='0' y1='270' x2='600' y2='270' stroke='%23f8fafc' stroke-dasharray='25 15' stroke-width='5'/%3E%3Ctext x='300' y='60' font-family='sans-serif' font-size='22' font-weight='bold' fill='%2334d399' text-anchor='middle'%3E✅ CIVICTRUST DEMO: POTHOLE REPAIRED & TARRED%3C/text%3E%3Ctext x='300' y='95' font-family='sans-serif' font-size='14' fill='%23cbd5e1' text-anchor='middle'%3E[Smooth Level Surface Verified - AI Confidence 92%]%3C/text%3E%3C/svg%3E",
+
+  debris_before: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'%3E%3Crect width='600' height='400' fill='%2344403c'/%3E%3Cpolygon points='150,330 250,220 380,330' fill='%2378716c'/%3E%3Cpolygon points='320,340 420,240 520,340' fill='%23a8a29e'/%3E%3Crect x='220' y='300' width='70' height='40' fill='%23ca8a04'/%3E%3Ctext x='300' y='60' font-family='sans-serif' font-size='22' font-weight='bold' fill='%23ffffff' text-anchor='middle'%3E⚠️ CIVICTRUST DEMO: CONSTRUCTION DEBRIS%3C/text%3E%3Ctext x='300' y='95' font-family='sans-serif' font-size='14' fill='%23fef08a' text-anchor='middle'%3E[Unlawful Debris on Footpath - 72h SLA]%3C/text%3E%3C/svg%3E",
+
+  debris_after_clean: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'%3E%3Crect width='600' height='400' fill='%230f172a'/%3E%3Crect x='50' y='220' width='500' height='160' fill='%2364748b' rx='10'/%3E%3Ctext x='300' y='60' font-family='sans-serif' font-size='22' font-weight='bold' fill='%234ade80' text-anchor='middle'%3E✅ CIVICTRUST DEMO: DEBRIS CLEARED%3C/text%3E%3Ctext x='300' y='95' font-family='sans-serif' font-size='14' fill='%23cbd5e1' text-anchor='middle'%3E[Public Footpath Clear & Open - AI Confidence 95%]%3C/text%3E%3C/svg%3E",
+
+  reopen_citizen_photo: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'%3E%3Crect width='600' height='400' fill='%237f1d1d'/%3E%3Ccircle cx='200' cy='280' r='45' fill='%23b45309'/%3E%3Crect x='270' y='260' width='80' height='60' rx='5' fill='%2315803d'/%3E%3Ccircle cx='400' cy='290' r='35' fill='%23eab308'/%3E%3Ctext x='300' y='60' font-family='sans-serif' font-size='22' font-weight='bold' fill='%23ffffff' text-anchor='middle'%3E🔄 RE-VERIFICATION EVIDENCE (CITIZEN REBUTTAL)%3C/text%3E%3Ctext x='300' y='95' font-family='sans-serif' font-size='14' fill='%23fef08a' text-anchor='middle'%3E[Fresh Geo-tagged Rebuttal Photo Taken Today]%3C/text%3E%3C/svg%3E",
+};
+
+const WARDS = [
+  'Ward 1 - Central Market',
+  'Ward 2 - Civil Lines',
+  'Ward 3 - Industrial Zone',
+  'Ward 4 - Green Park',
+  'Ward 5 - Station Road',
+  'Ward 6 - Heritage Quarter',
+  'Ward 7 - Tech Enclave',
+  'Ward 8 - Riverfront',
+];
+
+// Base GPS reference around a typical metropolitan civic grid (e.g., Delhi / Bangalore coordinate cluster)
+const BASE_LAT = 28.6139;
+const BASE_LNG = 77.2090;
+
+const createSyntheticData = async () => {
+  const hashedPasswordAdmin = await bcrypt.hash('Admin@123', 10);
+  const hashedPasswordCitizen = await bcrypt.hash('Citizen@123', 10);
+
+  const users = [
+    {
+      _id: '661000000000000000000001',
+      name: 'Municipal Review Officer',
+      email: 'admin@civictrust.org',
+      password: hashedPasswordAdmin,
+      role: 'admin',
+      ward: 'Ward 1 - Central Market',
+      phone: '+91 98111 22233',
+      createdAt: new Date(Date.now() - 30 * 24 * 3600 * 1000),
+    },
+    {
+      _id: '661000000000000000000002',
+      name: 'Aarav Sharma (Verified Citizen)',
+      email: 'citizen@civictrust.org',
+      password: hashedPasswordCitizen,
+      role: 'citizen',
+      ward: 'Ward 4 - Green Park',
+      phone: '+91 98765 43210',
+      createdAt: new Date(Date.now() - 25 * 24 * 3600 * 1000),
+    },
+    {
+      _id: '661000000000000000000003',
+      name: 'Priya Iyer',
+      email: 'priya@example.com',
+      password: hashedPasswordCitizen,
+      role: 'citizen',
+      ward: 'Ward 2 - Civil Lines',
+      phone: '+91 98222 33344',
+      createdAt: new Date(Date.now() - 20 * 24 * 3600 * 1000),
+    },
+  ];
+
+  const now = Date.now();
+  const complaints = [
+    // 1. Garbage Dump - Suspicious Resolution (The flagship hackathon demo case!)
+    {
+      _id: '662000000000000000000001',
+      complaintId: 'CT-2026-0841',
+      citizenId: users[1]._id,
+      citizenName: 'Aarav Sharma (Verified Citizen)',
+      citizenEmail: 'citizen@civictrust.org',
+      citizenPhone: '+91 98765 43210',
+      category: 'Garbage Dump',
+      description: 'Massive overflowing garbage dump blocking pedestrian walkway near Community Center gate. Foul smell spreading across the block.',
+      beforePhoto: SAMPLE_IMAGES.garbage_before,
+      resolutionPhoto: SAMPLE_IMAGES.garbage_after_suspicious,
+      latitude: BASE_LAT + 0.012,
+      longitude: BASE_LNG + 0.015,
+      ward: 'Ward 4 - Green Park',
+      address: 'Near Gate 3, Community Center, Green Park Main',
+      submittedAt: new Date(now - 10 * 3600 * 1000), // 10h ago
+      slaHours: 12,
+      slaDeadline: new Date(now + 2 * 3600 * 1000), // 2h left
+      status: 'SUSPICIOUS',
+      verificationStatus: 'SUSPICIOUS',
+      verificationConfidence: 78,
+      verificationReason: 'The reported garbage dump still appears visible in the after image. Residual waste patterns and plastic mounds detected in the coordinates. Human review recommended.',
+      verificationMethod: 'Automated Vision Verification Engine (Prototype)',
+      reopenReason: '',
+      reopenedAt: null,
+      resolutionNotes: 'Sanitation contractor claimed full clearance with secondary truck.',
+      resolvedAt: new Date(now - 1 * 3600 * 1000),
+      timeline: [
+        {
+          action: 'Complaint Filed',
+          status: 'SUBMITTED',
+          timestamp: new Date(now - 10 * 3600 * 1000),
+          actor: 'Aarav Sharma',
+          actorRole: 'citizen',
+          notes: 'Photo and GPS captured. 12-hour SLA countdown initiated.',
+          photo: SAMPLE_IMAGES.garbage_before,
+        },
+        {
+          action: 'Resolution Claimed',
+          status: 'RESOLUTION_CLAIMED',
+          timestamp: new Date(now - 2 * 3600 * 1000),
+          actor: 'Sanitation Unit 4',
+          actorRole: 'admin',
+          notes: 'Contractor uploaded resolution photo claiming site cleared.',
+          photo: SAMPLE_IMAGES.garbage_after_suspicious,
+        },
+        {
+          action: 'AI Verification Executed',
+          status: 'SUSPICIOUS',
+          timestamp: new Date(now - 1.8 * 3600 * 1000),
+          actor: 'Automated Vision Engine',
+          actorRole: 'system',
+          notes: '⚠️ Verification Result: SUSPICIOUS (Confidence 78%). Waste residue detected.',
+        },
+      ],
+    },
+
+    // 2. Garbage Dump - Reopened by Citizen
+    {
+      _id: '662000000000000000000002',
+      complaintId: 'CT-2026-0792',
+      citizenId: users[1]._id,
+      citizenName: 'Aarav Sharma (Verified Citizen)',
+      citizenEmail: 'citizen@civictrust.org',
+      citizenPhone: '+91 98765 43210',
+      category: 'Garbage Dump',
+      description: 'Solid waste pile spilling onto main road corner opposite metro pillar 42.',
+      beforePhoto: SAMPLE_IMAGES.garbage_before,
+      resolutionPhoto: SAMPLE_IMAGES.garbage_after_suspicious,
+      reopenPhoto: SAMPLE_IMAGES.reopen_citizen_photo,
+      latitude: BASE_LAT + 0.018,
+      longitude: BASE_LNG - 0.012,
+      ward: 'Ward 1 - Central Market',
+      address: 'Opposite Metro Pillar 42, Central Market Road',
+      submittedAt: new Date(now - 28 * 3600 * 1000),
+      slaHours: 12,
+      slaDeadline: new Date(now - 16 * 3600 * 1000),
+      status: 'REOPENED',
+      verificationStatus: 'SUSPICIOUS',
+      verificationConfidence: 81,
+      verificationReason: 'Automated review flagged persistent debris in claimed resolution.',
+      verificationMethod: 'Automated Vision Verification Engine (Prototype)',
+      reopenReason: 'I visited the spot today morning. The waste is still there, only two boxes were shifted. Attaching fresh timestamped photo.',
+      reopenedAt: new Date(now - 3 * 3600 * 1000),
+      resolutionNotes: 'Contractor marked resolved.',
+      resolvedAt: new Date(now - 14 * 3600 * 1000),
+      timeline: [
+        {
+          action: 'Complaint Filed',
+          status: 'SUBMITTED',
+          timestamp: new Date(now - 28 * 3600 * 1000),
+          actor: 'Aarav Sharma',
+          actorRole: 'citizen',
+          notes: '12-hour SLA initiated.',
+          photo: SAMPLE_IMAGES.garbage_before,
+        },
+        {
+          action: 'Resolution Claimed',
+          status: 'RESOLUTION_CLAIMED',
+          timestamp: new Date(now - 14 * 3600 * 1000),
+          actor: 'Central Sanitation Ward',
+          actorRole: 'admin',
+          notes: 'Claimed cleared.',
+          photo: SAMPLE_IMAGES.garbage_after_suspicious,
+        },
+        {
+          action: 'Resolution Flagged Suspicious',
+          status: 'SUSPICIOUS',
+          timestamp: new Date(now - 13.8 * 3600 * 1000),
+          actor: 'Vision AI',
+          actorRole: 'system',
+          notes: 'Flagged with 81% confidence.',
+        },
+        {
+          action: 'Citizen Re-Verification & Reopened',
+          status: 'REOPENED',
+          timestamp: new Date(now - 3 * 3600 * 1000),
+          actor: 'Aarav Sharma',
+          actorRole: 'citizen',
+          notes: 'Citizen reopened complaint with fresh rebuttal photo evidence.',
+          photo: SAMPLE_IMAGES.reopen_citizen_photo,
+        },
+      ],
+    },
+
+    // 3. Pothole - Verified Resolved (92% Confidence)
+    {
+      _id: '662000000000000000000003',
+      complaintId: 'CT-2026-0655',
+      citizenId: users[2]._id,
+      citizenName: 'Priya Iyer',
+      citizenEmail: 'priya@example.com',
+      citizenPhone: '+91 98222 33344',
+      category: 'Potholes',
+      description: 'Dangerous pothole on middle lane causing vehicle skidding during evening traffic.',
+      beforePhoto: SAMPLE_IMAGES.pothole_before,
+      resolutionPhoto: SAMPLE_IMAGES.pothole_after_clean,
+      latitude: BASE_LAT - 0.015,
+      longitude: BASE_LNG + 0.022,
+      ward: 'Ward 2 - Civil Lines',
+      address: 'Civil Lines Road, Near Secretariat Circle',
+      submittedAt: new Date(now - 36 * 3600 * 1000),
+      slaHours: 48,
+      slaDeadline: new Date(now + 12 * 3600 * 1000),
+      status: 'VERIFIED',
+      verificationStatus: 'VERIFIED',
+      verificationConfidence: 93,
+      verificationReason: 'The after image shows visual evidence consistent with the pothole being asphalted and level road surface restored.',
+      verificationMethod: 'Automated Vision Verification Engine (Prototype)',
+      reopenReason: '',
+      reopenedAt: null,
+      resolutionNotes: 'Road maintenance wing filled and cold-rolled asphalt patch.',
+      resolvedAt: new Date(now - 6 * 3600 * 1000),
+      timeline: [
+        {
+          action: 'Complaint Filed',
+          status: 'SUBMITTED',
+          timestamp: new Date(now - 36 * 3600 * 1000),
+          actor: 'Priya Iyer',
+          actorRole: 'citizen',
+          notes: '48h SLA clock started.',
+          photo: SAMPLE_IMAGES.pothole_before,
+        },
+        {
+          action: 'Resolution Claimed & Verified',
+          status: 'VERIFIED',
+          timestamp: new Date(now - 6 * 3600 * 1000),
+          actor: 'PWD Road Works',
+          actorRole: 'admin',
+          notes: '✅ AI Verified (93% confidence) - Pothole tarred successfully.',
+          photo: SAMPLE_IMAGES.pothole_after_clean,
+        },
+      ],
+    },
+
+    // 4. Construction Debris - Active SLA Countdown (72h SLA)
+    {
+      _id: '662000000000000000000004',
+      complaintId: 'CT-2026-0910',
+      citizenId: users[1]._id,
+      citizenName: 'Aarav Sharma (Verified Citizen)',
+      citizenEmail: 'citizen@civictrust.org',
+      citizenPhone: '+91 98765 43210',
+      category: 'Construction Debris',
+      description: 'Bricks, concrete blocks and sand dumped on public pathway from nearby residential remodel.',
+      beforePhoto: SAMPLE_IMAGES.debris_before,
+      resolutionPhoto: '',
+      latitude: BASE_LAT + 0.025,
+      longitude: BASE_LNG - 0.005,
+      ward: 'Ward 3 - Industrial Zone',
+      address: 'Plot 48B, Phase 2 Service Road',
+      submittedAt: new Date(now - 18 * 3600 * 1000), // 18h ago
+      slaHours: 72,
+      slaDeadline: new Date(now + 54 * 3600 * 1000), // 54h left
+      status: 'IN_PROGRESS',
+      verificationStatus: 'PENDING',
+      verificationConfidence: 0,
+      verificationReason: '',
+      verificationMethod: 'Automated Vision Verification Engine (Prototype)',
+      reopenReason: '',
+      reopenedAt: null,
+      resolutionNotes: '',
+      resolvedAt: null,
+      timeline: [
+        {
+          action: 'Complaint Filed',
+          status: 'SUBMITTED',
+          timestamp: new Date(now - 18 * 3600 * 1000),
+          actor: 'Aarav Sharma',
+          actorRole: 'citizen',
+          notes: '72h Construction Debris SLA active.',
+          photo: SAMPLE_IMAGES.debris_before,
+        },
+        {
+          action: 'Dispatched to Ward Field Team',
+          status: 'IN_PROGRESS',
+          timestamp: new Date(now - 12 * 3600 * 1000),
+          actor: 'Zonal Inspector',
+          actorRole: 'admin',
+          notes: 'Heavy loader equipment scheduled.',
+        },
+      ],
+    },
+
+    // 5. Uncleaned Sweeping - SLA Breached (24h SLA expired)
+    {
+      _id: '662000000000000000000005',
+      complaintId: 'CT-2026-0512',
+      citizenId: users[2]._id,
+      citizenName: 'Priya Iyer',
+      citizenEmail: 'priya@example.com',
+      citizenPhone: '+91 98222 33344',
+      category: 'Uncleaned Sweeping',
+      description: 'Dry leaves and street sweeping piles left accumulated near stormwater drain inlet.',
+      beforePhoto: SAMPLE_IMAGES.garbage_before,
+      resolutionPhoto: '',
+      latitude: BASE_LAT - 0.022,
+      longitude: BASE_LNG - 0.018,
+      ward: 'Ward 5 - Station Road',
+      address: 'Railway Colony Road, Near Junction Bus Bay',
+      submittedAt: new Date(now - 38 * 3600 * 1000), // 38h ago
+      slaHours: 24,
+      slaDeadline: new Date(now - 14 * 3600 * 1000), // Breached 14h ago
+      status: 'SUBMITTED',
+      verificationStatus: 'PENDING',
+      verificationConfidence: 0,
+      verificationReason: '',
+      verificationMethod: 'Automated Vision Verification Engine (Prototype)',
+      reopenReason: '',
+      reopenedAt: null,
+      resolutionNotes: '',
+      resolvedAt: null,
+      timeline: [
+        {
+          action: 'Complaint Filed',
+          status: 'SUBMITTED',
+          timestamp: new Date(now - 38 * 3600 * 1000),
+          actor: 'Priya Iyer',
+          actorRole: 'citizen',
+          notes: '24h SLA initiated.',
+          photo: SAMPLE_IMAGES.garbage_before,
+        },
+        {
+          action: 'SLA Deadline Breached',
+          status: 'SUBMITTED',
+          timestamp: new Date(now - 14 * 3600 * 1000),
+          actor: 'CivicTrust SLA Monitor',
+          actorRole: 'system',
+          notes: '⚠️ SLA Breached: Resolution not claimed within 24 hours.',
+        },
+      ],
+    },
+
+    // 6. Blocked Drains - Verified
+    {
+      _id: '662000000000000000000006',
+      complaintId: 'CT-2026-0420',
+      citizenId: users[1]._id,
+      citizenName: 'Aarav Sharma (Verified Citizen)',
+      citizenEmail: 'citizen@civictrust.org',
+      citizenPhone: '+91 98765 43210',
+      category: 'Blocked Drains',
+      description: 'Stormwater drain overflowing onto street during light shower due to plastic bag blockage.',
+      beforePhoto: SAMPLE_IMAGES.garbage_before,
+      resolutionPhoto: SAMPLE_IMAGES.garbage_after_clean,
+      latitude: BASE_LAT + 0.031,
+      longitude: BASE_LNG + 0.012,
+      ward: 'Ward 6 - Heritage Quarter',
+      address: 'Old Bazaar Street, Near Clock Tower',
+      submittedAt: new Date(now - 45 * 3600 * 1000),
+      slaHours: 24,
+      slaDeadline: new Date(now - 21 * 3600 * 1000),
+      status: 'RESOLVED',
+      verificationStatus: 'VERIFIED',
+      verificationConfidence: 91,
+      verificationReason: 'The after image shows drain grates cleared and free water flow restored.',
+      verificationMethod: 'Automated Vision Verification Engine (Prototype)',
+      reopenReason: '',
+      reopenedAt: null,
+      resolutionNotes: 'Suction machine deployed, drain cleared.',
+      resolvedAt: new Date(now - 22 * 3600 * 1000),
+      timeline: [
+        {
+          action: 'Complaint Filed',
+          status: 'SUBMITTED',
+          timestamp: new Date(now - 45 * 3600 * 1000),
+          actor: 'Aarav Sharma',
+          actorRole: 'citizen',
+          notes: 'Drain blockage reported.',
+        },
+        {
+          action: 'Resolution Verified & Closed',
+          status: 'RESOLVED',
+          timestamp: new Date(now - 22 * 3600 * 1000),
+          actor: 'Sanitation Team',
+          actorRole: 'admin',
+          notes: 'Resolution verified within SLA.',
+        },
+      ],
+    },
+
+    // 7. Non-functional Public Toilets - Suspicious
+    {
+      _id: '662000000000000000000007',
+      complaintId: 'CT-2026-0318',
+      citizenId: users[2]._id,
+      citizenName: 'Priya Iyer',
+      citizenEmail: 'priya@example.com',
+      citizenPhone: '+91 98222 33344',
+      category: 'Non-functional Public Toilets',
+      description: 'Water tap broken and door latch damaged at the municipal community toilet block.',
+      beforePhoto: SAMPLE_IMAGES.garbage_before,
+      resolutionPhoto: SAMPLE_IMAGES.garbage_after_suspicious,
+      latitude: BASE_LAT + 0.008,
+      longitude: BASE_LNG - 0.024,
+      ward: 'Ward 7 - Tech Enclave',
+      address: 'Opposite Cyber Park Gate 2',
+      submittedAt: new Date(now - 16 * 3600 * 1000),
+      slaHours: 24,
+      slaDeadline: new Date(now + 8 * 3600 * 1000),
+      status: 'SUSPICIOUS',
+      verificationStatus: 'SUSPICIOUS',
+      verificationConfidence: 77,
+      verificationReason: 'After image quality degraded and visual fixtures still appear detached. Human verification required.',
+      verificationMethod: 'Automated Vision Verification Engine (Prototype)',
+      reopenReason: '',
+      reopenedAt: null,
+      resolutionNotes: 'Maintenance contractor submitted completion report.',
+      resolvedAt: new Date(now - 4 * 3600 * 1000),
+      timeline: [
+        {
+          action: 'Complaint Filed',
+          status: 'SUBMITTED',
+          timestamp: new Date(now - 16 * 3600 * 1000),
+          actor: 'Priya Iyer',
+          actorRole: 'citizen',
+          notes: '24h SLA clock.',
+        },
+        {
+          action: 'Resolution Claimed',
+          status: 'RESOLUTION_CLAIMED',
+          timestamp: new Date(now - 4 * 3600 * 1000),
+          actor: 'Civic Maintenance Team',
+          actorRole: 'admin',
+          notes: 'Claimed repaired.',
+        },
+        {
+          action: 'Flagged Suspicious',
+          status: 'SUSPICIOUS',
+          timestamp: new Date(now - 3.8 * 3600 * 1000),
+          actor: 'Vision AI',
+          actorRole: 'system',
+          notes: 'Confidence 77% - Flagged for manual review.',
+        },
+      ],
+    },
+
+    // 8. Construction Debris - Verified Resolved
+    {
+      _id: '662000000000000000000008',
+      complaintId: 'CT-2026-0205',
+      citizenId: users[1]._id,
+      citizenName: 'Aarav Sharma (Verified Citizen)',
+      citizenEmail: 'citizen@civictrust.org',
+      citizenPhone: '+91 98765 43210',
+      category: 'Construction Debris',
+      description: 'Sand bags and rubble obstructing cycle track on Riverfront Promenade.',
+      beforePhoto: SAMPLE_IMAGES.debris_before,
+      resolutionPhoto: SAMPLE_IMAGES.debris_after_clean,
+      latitude: BASE_LAT - 0.035,
+      longitude: BASE_LNG + 0.018,
+      ward: 'Ward 8 - Riverfront',
+      address: 'Promenade West, Near Boating Club',
+      submittedAt: new Date(now - 60 * 3600 * 1000),
+      slaHours: 72,
+      slaDeadline: new Date(now + 12 * 3600 * 1000),
+      status: 'VERIFIED',
+      verificationStatus: 'VERIFIED',
+      verificationConfidence: 96,
+      verificationReason: 'The after image demonstrates complete clearance of rubble and restoration of pedestrian cycleway.',
+      verificationMethod: 'Automated Vision Verification Engine (Prototype)',
+      reopenReason: '',
+      reopenedAt: null,
+      resolutionNotes: 'Debris removed via hydraulic loader.',
+      resolvedAt: new Date(now - 10 * 3600 * 1000),
+      timeline: [
+        {
+          action: 'Complaint Filed',
+          status: 'SUBMITTED',
+          timestamp: new Date(now - 60 * 3600 * 1000),
+          actor: 'Aarav Sharma',
+          actorRole: 'citizen',
+          notes: '72h SLA.',
+        },
+        {
+          action: 'Resolution Claimed & Verified',
+          status: 'VERIFIED',
+          timestamp: new Date(now - 10 * 3600 * 1000),
+          actor: 'Riverfront Admin',
+          actorRole: 'admin',
+          notes: '✅ Verified with 96% AI confidence.',
+        },
+      ],
+    },
+  ];
+
+  return { users, complaints, sampleImages: SAMPLE_IMAGES, wards: WARDS };
+};
+
+module.exports = {
+  SAMPLE_IMAGES,
+  WARDS,
+  createSyntheticData,
+};
