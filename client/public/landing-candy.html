@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CivicTrust — Landing & Verification Platform (Candy Edition)</title>
+  <!-- Google Fonts: DM Sans & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            candy: {
+              50: '#fdf2f8',
+              100: '#fce7f3',
+              200: '#fbcfe8',
+              300: '#f9a8d4',
+              400: '#f472b6',
+              500: '#e040a0', // Candy Brand Accent
+              600: '#db2777',
+              700: '#be185d',
+              800: '#9d174d',
+              900: '#831843',
+            },
+            surface: {
+              base: '#fff9fb',
+              card: 'rgba(255, 255, 255, 0.85)',
+              border: '#f5d5e5',
+              dark: '#1f132b',
+              muted: '#6b5c77',
+            }
+          },
+          fontFamily: {
+            sans: ['"DM Sans"', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background: radial-gradient(circle at 15% 10%, #ffe4f0 0%, #fff9fc 45%, #f7eff9 100%);
+      font-family: 'DM Sans', sans-serif;
+      color: #1f132b;
+      min-height: 100vh;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid #f8dceb;
+      box-shadow: 0 10px 30px -5px rgba(224, 64, 160, 0.07);
+    }
+    .candy-pill-gradient {
+      background: linear-gradient(135deg, #e040a0 0%, #db2777 100%);
+      box-shadow: 0 8px 20px -4px rgba(224, 64, 160, 0.4);
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-pink-100 selection:text-pink-600">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-pink-100 px-6 py-3.5">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-6">
+        <a href="/" class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-400 flex items-center justify-center shadow-md shadow-pink-200">
+            <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 5-4.5 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9z" />
+            </svg>
+          </div>
+          <span class="font-display font-extrabold text-xl tracking-tight text-gray-900">Civic<span class="text-candy-500">Trust</span></span>
+        </a>
+        <div class="hidden md:flex items-center space-x-1.5 bg-pink-50 px-3 py-1 rounded-full text-xs font-medium text-pink-700">
+          <span class="w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
+          <span>REAL ISSUES. REAL EVIDENCE. REAL ACCOUNTABILITY.</span>
+        </div>
+      </div>
+
+      <nav class="hidden lg:flex items-center space-x-1">
+        <a href="/" class="px-4 py-1.5 rounded-full text-sm font-semibold bg-candy-500 text-white shadow-sm">Landing Page</a>
+        <a href="/citizen/dashboard" class="px-4 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:text-candy-600 hover:bg-pink-50/50 transition">Citizen Portal</a>
+        <a href="/admin/analytics" class="px-4 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:text-candy-600 hover:bg-pink-50/50 transition">Admin Analytics</a>
+        <a href="/admin/osint" class="px-4 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:text-candy-600 hover:bg-pink-50/50 transition">OSINT Verification</a>
+        <a href="/citizen/complaints" class="px-4 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:text-candy-600 hover:bg-pink-50/50 transition">Master Incidents</a>
+      </nav>
+
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2 bg-emerald-50 border border-emerald-200/60 px-3 py-1 rounded-full text-xs font-semibold text-emerald-700">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Live Mesh</span>
+          <span class="text-emerald-500/70 border-l border-emerald-300 pl-1.5">18ms</span>
+        </div>
+        <div class="flex items-center space-x-2 pl-2">
+          <div class="w-8 h-8 rounded-full bg-pink-100 border border-pink-200 flex items-center justify-center font-bold text-xs text-pink-700">AZ</div>
+          <div class="hidden xl:block text-left text-xs leading-tight">
+            <p class="font-bold text-gray-800">Azeez</p>
+            <p class="text-gray-400">Senior Verifier</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="max-w-7xl mx-auto px-6 pt-16 pb-20 text-center">
+    <!-- Top badge -->
+    <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-pink-100/80 border border-pink-200 text-xs font-semibold text-pink-700 mb-8">
+      <span class="w-2 h-2 rounded-full bg-candy-500"></span>
+      <span>NEXT-GEN AUTONOMOUS MUNICIPAL ACCOUNTABILITY ENGINE</span>
+      <span class="text-pink-300">•</span>
+      <span class="text-pink-600">v3.4 Cryptographic Core</span>
+    </div>
+
+    <!-- Main Title -->
+    <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight text-gray-900 font-display mb-4">
+      Real Issues. Real Evidence.<br>
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-candy-500 via-rose-500 to-pink-600">Real Accountability.</span>
+    </h1>
+
+    <p class="max-w-2xl mx-auto text-base md:text-lg text-gray-600 mb-10 leading-relaxed">
+      CivicTrust eliminates ghost resolutions with forensic photo verification, OSINT multi-factor geotagging, and cluster incident intelligence. Bridging citizens and municipal governance with zero-trust verifiability.
+    </p>
+
+    <!-- CTAs -->
+    <div class="flex flex-wrap items-center justify-center gap-4 mb-16">
+      <a href="/citizen/report" class="candy-pill-gradient text-white font-bold px-8 py-3.5 rounded-full hover:opacity-95 transition flex items-center space-x-2 text-sm shadow-lg shadow-pink-500/25">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <span>Report an Issue</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+      </a>
+      <a href="/admin/verification" class="bg-white hover:bg-pink-50/60 text-gray-700 font-bold px-7 py-3.5 rounded-full border border-pink-200 transition text-sm flex items-center space-x-2 shadow-sm">
+        <svg class="w-4 h-4 text-pink-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>
+        <span>Admin Verification Console</span>
+        <span class="text-[10px] font-bold uppercase tracking-wider bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full">Auth Required</span>
+      </a>
+    </div>
+
+    <!-- Telemetry Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-20">
+      <div class="glass-card rounded-3xl p-5 text-center">
+        <div class="flex items-center justify-center space-x-1.5 text-candy-600 mb-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <span class="text-2xl font-black font-display text-gray-900">99.4%</span>
+        </div>
+        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Dispute Resolution Accuracy</p>
+      </div>
+      <div class="glass-card rounded-3xl p-5 text-center">
+        <div class="flex items-center justify-center space-x-1.5 text-rose-600 mb-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.162 1.141-.168 1.704-.017l4.032 1.085" /></svg>
+          <span class="text-2xl font-black font-display text-gray-900">14,820</span>
+        </div>
+        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Verified Repairs Recorded</p>
+      </div>
+      <div class="glass-card rounded-3xl p-5 text-center">
+        <div class="flex items-center justify-center space-x-1.5 text-pink-600 mb-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
+          <span class="text-2xl font-black font-display text-gray-900">&lt; 4.2 hrs</span>
+        </div>
+        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Median Response SLA</p>
+      </div>
+      <div class="glass-card rounded-3xl p-5 text-center">
+        <div class="flex items-center justify-center space-x-1.5 text-emerald-600 mb-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+          <span class="text-2xl font-black font-display text-gray-900">0</span>
+        </div>
+        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Fabricated Closures</p>
+      </div>
+    </div>
+
+    <!-- Active Ledger Verification Card -->
+    <div class="glass-card rounded-3xl p-6 md:p-8 text-left max-w-5xl mx-auto mb-28 border border-pink-200">
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-pink-100">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-pink-100 text-candy-600 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.864 4.243A7.5 7.5 0 0119.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 004.5 10.5a7.464 7.464 0 01-1.15 3.993m1.989 3.559A11.209 11.209 0 008.25 10.5a3.75 3.75 0 117.5 0c0 .527-.021 1.049-.064 1.565m-9.778 2.658A14.28 14.28 0 0012 18c2.44 0 4.707-.611 6.677-1.688" /></svg>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-pink-100 text-pink-700">Active Ledger Verification</span>
+              <span class="text-xs text-gray-400 font-mono">NODE #US-EAST-0914</span>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 font-display">Forensic Pipeline In Action: Pothole & Conduit Rupture</h3>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2 text-xs font-mono bg-pink-50 px-3 py-1.5 rounded-full text-pink-700 border border-pink-200">
+          <span>Hash:</span>
+          <span class="font-bold">0x9c4f...a8e2</span>
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        </div>
+      </div>
+
+      <!-- 3-Step Forensic Verification Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-6">
+        <!-- Step 1 -->
+        <div class="bg-white/90 rounded-2xl p-4 border border-pink-100 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3 text-xs">
+              <span class="font-bold text-gray-700 uppercase">STEP 01 • INITIAL CAPTURE</span>
+              <span class="text-[10px] bg-pink-100 text-pink-700 font-bold px-2 py-0.5 rounded-full">EXIF Authenticated</span>
+            </div>
+            <div class="rounded-xl overflow-hidden mb-3 border border-pink-100 relative bg-gray-100 aspect-video flex items-center justify-center">
+              <img src="https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=600&q=80" alt="Pothole Damage Capture" class="w-full h-full object-cover">
+              <div class="absolute bottom-1.5 left-1.5 right-1.5 bg-black/60 backdrop-blur-sm text-[10px] text-white px-2 py-1 rounded-md flex justify-between font-mono">
+                <span>LAT: 37.7749° N</span>
+                <span>LONG: -122.4194° W</span>
+              </div>
+            </div>
+            <div class="text-xs space-y-1 text-gray-600">
+              <div class="flex justify-between"><span>Camera Sensor:</span> <span class="font-mono text-gray-900 font-medium">IMX800 Raw Bayer</span></div>
+              <div class="flex justify-between"><span>Optical Integrity:</span> <span class="text-emerald-600 font-bold">Passed (No Diffusions)</span></div>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-pink-50 flex items-center justify-between text-[11px] text-gray-400">
+            <span>Timestamp: 14:02:18 UTC</span>
+            <span class="text-pink-600 font-semibold flex items-center space-x-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+              <span>Ingested</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-white/90 rounded-2xl p-4 border border-pink-100 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3 text-xs">
+              <span class="font-bold text-gray-700 uppercase">STEP 02 • OSINT VERIFICATION</span>
+              <span class="text-[10px] bg-candy-100 text-candy-700 font-bold px-2 py-0.5 rounded-full">3 Matches Correlated</span>
+            </div>
+            <div class="rounded-xl p-3 bg-pink-50/50 border border-pink-100 mb-3 text-xs space-y-2">
+              <div class="flex justify-between font-bold text-gray-800">
+                <span>Landmark Matrix:</span>
+                <span class="text-candy-600">98.2% Confidence</span>
+              </div>
+              <div class="h-16 w-full flex items-center justify-center">
+                <svg class="w-full h-full text-candy-400" viewBox="0 0 200 60" fill="none">
+                  <path d="M 10 40 Q 60 10 110 35 T 190 20" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+                  <circle cx="110" cy="35" r="4" class="fill-candy-600" />
+                  <circle cx="190" cy="20" r="4" class="fill-emerald-500" />
+                </svg>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-[11px] text-gray-600 pt-1">
+                <div>Cell Triangulation: <span class="font-bold text-gray-800">±3.2m</span></div>
+                <div>Sun Angle: <span class="font-bold text-emerald-600">Matched</span></div>
+              </div>
+            </div>
+            <div class="text-xs space-y-1 text-gray-600">
+              <div class="flex justify-between"><span>Cluster Deduping:</span> <span class="font-bold text-gray-900">Merged into #INC-8921</span></div>
+              <div class="flex justify-between"><span>Dispatch Priority:</span> <span class="text-rose-600 font-bold">Tier 1 Urban Safety</span></div>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-pink-50 flex items-center justify-between text-[11px] text-gray-400">
+            <span>Cluster Size: 6 Citizens</span>
+            <span class="text-candy-600 font-semibold flex items-center space-x-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              <span>Consolidated</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-white/90 rounded-2xl p-4 border border-pink-100 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3 text-xs">
+              <span class="font-bold text-gray-700 uppercase">STEP 03 • CRYPTOGRAPHIC CLOSE</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">Dual-Key Confirmed</span>
+            </div>
+            <div class="rounded-xl overflow-hidden mb-3 border border-pink-100 relative bg-gray-100 aspect-video flex items-center justify-center">
+              <img src="https://images.unsplash.com/photo-1541888946425-d0fbb18f15f6?auto=format&fit=crop&w=600&q=80" alt="Completed Municipal Repair" class="w-full h-full object-cover">
+              <div class="absolute inset-0 bg-emerald-950/20 flex items-center justify-center">
+                <span class="bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center space-x-1.5 shadow-md">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                  <span>Resolved • Public Ledger Seal</span>
+                </span>
+              </div>
+            </div>
+            <div class="text-xs space-y-1 text-gray-600">
+              <div class="flex justify-between"><span>Municipality Key:</span> <span class="font-mono text-gray-900 font-medium">Dept. Public Works #44</span></div>
+              <div class="flex justify-between"><span>Citizen Validator:</span> <span class="text-candy-600 font-bold">Cryptographic Signoff OK</span></div>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-pink-50 flex items-center justify-between text-[11px] text-gray-400">
+            <span>Resolution Time: 2h 44m</span>
+            <span class="font-mono text-gray-600">Block #481,209</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3-Pillar Technical Architecture Section -->
+    <div class="text-center mb-10">
+      <span class="text-xs font-extrabold uppercase tracking-widest text-candy-600 bg-pink-100 px-3 py-1 rounded-full">ARCHITECTURE</span>
+      <h2 class="text-3xl md:text-4xl font-extrabold font-display text-gray-900 mt-3 mb-3">Autonomous Verification Pipeline</h2>
+      <p class="text-gray-500 max-w-xl mx-auto text-sm">How CivicTrust translates raw smartphone telemetry and citizen reports into tamper-proof municipal action without human bottlenecking.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto text-left mb-28">
+      <div class="glass-card rounded-3xl p-7 hover:border-pink-300 transition group">
+        <div class="w-12 h-12 rounded-2xl bg-pink-100 text-candy-600 flex items-center justify-center font-extrabold text-lg mb-5 group-hover:scale-110 transition">01</div>
+        <h4 class="font-display font-bold text-lg text-gray-900 mb-2">Citizen Submission</h4>
+        <p class="text-gray-600 text-sm leading-relaxed mb-4">Citizens capture photo evidence via web or native app. Sensor telemetry encapsulates gyro data, altitude, lens profiles, and cryptographic nonce timestamps.</p>
+        <ul class="text-xs space-y-2 text-gray-600">
+          <li class="flex items-center space-x-2"><svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg><span>Anti-spoofing sensor validation</span></li>
+          <li class="flex items-center space-x-2"><svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg><span>Optional privacy & no-GPS fallback mode</span></li>
+          <li class="flex items-center space-x-2"><svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg><span>Instant local client-side hashing</span></li>
+        </ul>
+      </div>
+
+      <div class="glass-card rounded-3xl p-7 hover:border-pink-300 transition group">
+        <div class="w-12 h-12 rounded-2xl bg-candy-100 text-candy-600 flex items-center justify-center font-extrabold text-lg mb-5 group-hover:scale-110 transition">02</div>
+        <h4 class="font-display font-bold text-lg text-gray-900 mb-2">OSINT & Clustering Engine</h4>
+        <p class="text-gray-600 text-sm leading-relaxed mb-4">Our neural vision models extract surrounding road signage, storefront OCR, and solar shadows to triangulate position when metadata is stripped or disputed.</p>
+        <ul class="text-xs space-y-2 text-gray-600">
+          <li class="flex items-center space-x-2"><svg class="w-4 h-4 text-candy-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg><span>Storefront OCR & urban signage cross-referencing</span></li>
+          <li class="flex items-center space-x-2"><svg class="w-4 h-4 text-candy-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg><span>Duplicate report deduplication & clustering</span></li>
+          <li class="flex items-center space-x-2"><svg class="w-4 h-4 text-candy-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg><span>Automated severity scoring index</span></li>
+        </ul>
+      </div>
+
+      <div class="glass-card rounded-3xl p-7 hover:border-pink-300 transition group">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-extrabold text-lg mb-5 group-hover:scale-110 transition">03</div>
+        <h4 class="font-display font-bold text-lg text-gray-900 mb-2">Verified Municipal Closure</h4>
+        <p class="text-gray-600 text-sm leading-relaxed mb-4">Municipal teams cannot close work orders with text notes alone. They must upload matching post-repair forensic photos evaluated by computer vision.</p>
+        <ul class="text-xs space-y-2 text-gray-600">
+          <li class="flex items-center space-x-2"><svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg><span>Before/After structural matching algorithms</span></li>
+          <li class="flex items-center space-x-2"><svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg><span>Dual-key citizen quorum notification</span></li>
+          <li class="flex items-center space-x-2"><svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg><span>Immutable audit trail published to public ledger</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- The Accountability Gap: Legacy 311 vs CivicTrust -->
+    <div class="glass-card rounded-3xl p-8 max-w-5xl mx-auto text-left mb-28 border border-pink-200">
+      <div class="text-center mb-10">
+        <span class="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-rose-100 text-rose-700">THE ACCOUNTABILITY GAP</span>
+        <h3 class="text-2xl md:text-3xl font-bold font-display text-gray-900 mt-2">How CivicTrust Solves Civic Deception</h3>
+        <p class="text-gray-500 text-sm mt-1">Outdated 311 systems rely on honor systems where agencies mark dangerous civic infrastructure as "Resolved" without proof.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Legacy -->
+        <div class="bg-rose-50/50 rounded-2xl p-6 border border-rose-200/80">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="font-bold text-gray-900 flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-full bg-rose-200 text-rose-700 flex items-center justify-center text-xs font-black">✕</span>
+              <span>Legacy 311 Portals</span>
+            </h4>
+            <span class="text-[10px] font-bold uppercase tracking-wider bg-rose-200 text-rose-800 px-2.5 py-0.5 rounded-full">Vulnerable to Fraud</span>
+          </div>
+          <ul class="space-y-4 text-xs text-gray-700">
+            <li class="flex space-x-2">
+              <span class="text-rose-500 font-bold">•</span>
+              <div><strong class="text-gray-900">“Ghost Closures”:</strong> Internal operators close work orders with arbitrary notes like “Inspected – No Action Required” without visual verification.</div>
+            </li>
+            <li class="flex space-x-2">
+              <span class="text-rose-500 font-bold">•</span>
+              <div><strong class="text-gray-900">Fragmented Duplicates:</strong> 40 reports of the same burst pipe create 40 unlinked tickets, overwhelming public work crews.</div>
+            </li>
+            <li class="flex space-x-2">
+              <span class="text-rose-500 font-bold">•</span>
+              <div><strong class="text-gray-900">Zero Independent Oversight:</strong> Audit trails exist only in proprietary silos where internal metrics can be adjusted.</div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- CivicTrust -->
+        <div class="bg-white rounded-2xl p-6 border border-pink-200 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="font-bold text-gray-900 flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-full bg-pink-100 text-candy-600 flex items-center justify-center text-xs font-black">✓</span>
+              <span>CivicTrust Autonomous Engine</span>
+            </h4>
+            <span class="text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">Zero-Trust Standard</span>
+          </div>
+          <ul class="space-y-4 text-xs text-gray-700">
+            <li class="flex space-x-2">
+              <span class="text-candy-500 font-bold">•</span>
+              <div><strong class="text-gray-900">Forensic Visual Proof Mandatory:</strong> Repairs cannot be closed without geotagged, sun-angle authenticated photographic proof.</div>
+            </li>
+            <li class="flex space-x-2">
+              <span class="text-candy-500 font-bold">•</span>
+              <div><strong class="text-gray-900">OSINT Spatial Deduplication:</strong> Visual similarity embeddings link nearby photos into unified Master Incidents with live subscriber alerts.</div>
+            </li>
+            <li class="flex space-x-2">
+              <span class="text-candy-500 font-bold">•</span>
+              <div><strong class="text-gray-900">Public Cryptographic Ledger:</strong> Every action, timestamp, and crew ID is inscribed on an immutable, verifiable ledger for journalists and citizens.</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final Call to Action -->
+    <div class="candy-pill-gradient rounded-3xl p-10 max-w-5xl mx-auto text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-pink-500/20">
+      <div class="text-left">
+        <span class="text-xs font-bold uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full inline-block mb-3">Open Sovereign Transparency Pledge</span>
+        <h3 class="text-2xl md:text-3xl font-extrabold font-display">Deploy CivicTrust in Your Municipality</h3>
+        <p class="text-pink-100 text-sm mt-1 max-w-lg">Whether you are an investigative journalist, civic leader, or city public works director, integrate with our zero-trust ledger API.</p>
+      </div>
+      <div class="flex items-center space-x-3 shrink-0">
+        <a href="/citizen/report" class="bg-white text-candy-700 hover:bg-pink-50 font-bold px-6 py-3 rounded-full text-xs transition shadow-md">Submit First Evidence</a>
+        <a href="/admin/osint" class="bg-pink-900/30 hover:bg-pink-900/40 border border-white/30 text-white font-bold px-5 py-3 rounded-full text-xs transition">API & Audit Whitepaper</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-pink-100 bg-white/60 py-8 px-6 text-xs text-gray-500">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <span class="font-display font-extrabold text-sm text-gray-800">Civic<span class="text-candy-500">Trust</span></span>
+        <span>© 2026 Decentralized Verification Infrastructure.</span>
+      </div>
+      <div class="flex items-center space-x-6">
+        <a href="#" class="hover:text-candy-600 transition">Ledger Protocol</a>
+        <a href="#" class="hover:text-candy-600 transition">Audits & Provenance</a>
+        <a href="#" class="hover:text-candy-600 transition">Node Network</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -7,7 +7,7 @@ const ImageCompareSlider = ({ beforeImage, afterImage, category }) => {
 
   if (!afterImage) {
     return (
-      <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 aspect-video flex flex-col items-center justify-center p-6 text-center">
+      <div className="relative rounded-2xl overflow-hidden border border-slate-800/80 bg-slate-950 aspect-video flex flex-col items-center justify-center p-6 text-center">
         {beforeImage ? (
           <img
             src={beforeImage}
@@ -17,35 +17,37 @@ const ImageCompareSlider = ({ beforeImage, afterImage, category }) => {
         ) : (
           <div className="text-slate-500 text-sm">No photo available</div>
         )}
-        <div className="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-lg border border-slate-800 text-xs font-semibold text-slate-200">
-          📷 Reported Citizen Photo
+        <div className="absolute bottom-3 left-3 bg-slate-950/90 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-cyan-500/30 text-xs font-semibold text-cyan-200 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+          📷 Reported Citizen Photographic Evidence
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3.5">
       {/* Control toggle */}
       <div className="flex items-center justify-between">
-        <div className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-          <Sparkles className="w-4 h-4 text-emerald-400" />
-          <span>Visual Resolution Evidence Inspection</span>
+        <div className="text-xs font-bold text-slate-200 flex items-center gap-2">
+          <div className="w-6 h-6 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+            <Sparkles className="w-3.5 h-3.5" />
+          </div>
+          <span>Visual Ground-Truth Delta Inspection</span>
         </div>
-        <div className="flex bg-slate-900 p-0.5 rounded-lg border border-slate-800 text-xs">
+        <div className="flex bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-xs">
           <button
             onClick={() => setMode('split')}
-            className={`px-2.5 py-1 rounded-md font-medium flex items-center gap-1 transition-colors ${
-              mode === 'split' ? 'bg-slate-800 text-white shadow' : 'text-slate-400 hover:text-slate-200'
+            className={`px-3 py-1 rounded-lg font-medium flex items-center gap-1.5 transition-all ${
+              mode === 'split' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <Split className="w-3.5 h-3.5" />
-            Slider
+            Interactive Slider
           </button>
           <button
             onClick={() => setMode('side')}
-            className={`px-2.5 py-1 rounded-md font-medium flex items-center gap-1 transition-colors ${
-              mode === 'side' ? 'bg-slate-800 text-white shadow' : 'text-slate-400 hover:text-slate-200'
+            className={`px-3 py-1 rounded-lg font-medium flex items-center gap-1.5 transition-all ${
+              mode === 'side' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <Columns className="w-3.5 h-3.5" />
@@ -57,7 +59,7 @@ const ImageCompareSlider = ({ beforeImage, afterImage, category }) => {
       {mode === 'split' ? (
         /* Interactive Split Slider */
         <div
-          className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden border border-slate-800 select-none shadow-xl cursor-ew-resize bg-slate-950"
+          className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden border border-cyan-500/20 select-none shadow-2xl cursor-ew-resize bg-slate-950"
           onMouseMove={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();
             const pos = ((e.clientX - rect.left) / rect.width) * 100;
@@ -76,8 +78,8 @@ const ImageCompareSlider = ({ beforeImage, afterImage, category }) => {
             alt="Resolution Evidence"
             className="absolute inset-0 w-full h-full object-cover"
           />
-          <div className="absolute top-3 right-3 bg-emerald-950/90 border border-emerald-500/30 text-emerald-200 text-xs font-semibold px-2.5 py-1 rounded-lg backdrop-blur-md shadow">
-            After (Resolution)
+          <div className="absolute top-3 right-3 bg-emerald-950/90 border border-emerald-500/40 text-emerald-200 text-xs font-bold px-3 py-1.5 rounded-xl backdrop-blur-md shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+            AFTER (Field Resolution)
           </div>
 
           {/* Foreground: Before Image (clipped) */}
@@ -91,17 +93,17 @@ const ImageCompareSlider = ({ beforeImage, afterImage, category }) => {
               className="absolute inset-0 w-full h-full object-cover max-w-none"
               style={{ width: '100%', height: '100%' }}
             />
-            <div className="absolute top-3 left-3 bg-rose-950/90 border border-rose-500/30 text-rose-200 text-xs font-semibold px-2.5 py-1 rounded-lg backdrop-blur-md shadow">
-              Before (Reported)
+            <div className="absolute top-3 left-3 bg-rose-950/90 border border-rose-500/40 text-rose-200 text-xs font-bold px-3 py-1.5 rounded-xl backdrop-blur-md shadow-[0_0_15px_rgba(244,63,94,0.3)]">
+              BEFORE (Citizen Report)
             </div>
           </div>
 
           {/* Slider Line & Handle */}
           <div
-            className="absolute top-0 bottom-0 w-0.5 bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)]"
+            className="absolute top-0 bottom-0 w-0.5 bg-cyan-400 shadow-[0_0_15px_rgba(6,182,212,1)]"
             style={{ left: `${sliderPos}%` }}
           >
-            <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white text-slate-950 shadow-2xl flex items-center justify-center font-bold text-xs">
+            <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-slate-950 border-2 border-cyan-400 text-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.8)] flex items-center justify-center font-bold text-xs">
               ↔
             </div>
           </div>
@@ -109,24 +111,24 @@ const ImageCompareSlider = ({ beforeImage, afterImage, category }) => {
       ) : (
         /* Side by Side View */
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="relative rounded-2xl overflow-hidden border border-rose-900/40 bg-slate-900 aspect-video shadow-lg">
+          <div className="relative rounded-2xl overflow-hidden border border-rose-500/30 bg-slate-950 aspect-video shadow-xl">
             <img
               src={beforeImage}
               alt="Reported Issue Before"
               className="w-full h-full object-cover"
             />
-            <div className="absolute bottom-2 left-2 bg-rose-950/90 text-rose-200 border border-rose-500/30 text-xs font-semibold px-2.5 py-1 rounded-lg backdrop-blur-md">
-              🔴 Before: Reported Issue
+            <div className="absolute bottom-3 left-3 bg-rose-950/90 text-rose-200 border border-rose-500/40 text-xs font-bold px-3 py-1.5 rounded-xl backdrop-blur-md shadow">
+              🔴 Before: Citizen Grievance
             </div>
           </div>
-          <div className="relative rounded-2xl overflow-hidden border border-emerald-900/40 bg-slate-900 aspect-video shadow-lg">
+          <div className="relative rounded-2xl overflow-hidden border border-emerald-500/30 bg-slate-950 aspect-video shadow-xl">
             <img
               src={afterImage}
               alt="Resolution Claimed After"
               className="w-full h-full object-cover"
             />
-            <div className="absolute bottom-2 left-2 bg-emerald-950/90 text-emerald-200 border border-emerald-500/30 text-xs font-semibold px-2.5 py-1 rounded-lg backdrop-blur-md">
-              🟢 After: Claimed Resolution
+            <div className="absolute bottom-3 left-3 bg-emerald-950/90 text-emerald-200 border border-emerald-500/40 text-xs font-bold px-3 py-1.5 rounded-xl backdrop-blur-md shadow">
+              🟢 After: Verified Field Resolution
             </div>
           </div>
         </div>

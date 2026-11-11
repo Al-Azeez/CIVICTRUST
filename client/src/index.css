@@ -1,36 +1,282 @@
 @import "tailwindcss";
 
+@theme {
+  --color-candy-50: #fdf2f8;
+  --color-candy-100: #fce7f3;
+  --color-candy-200: #fbcfe8;
+  --color-candy-300: #f9a8d4;
+  --color-candy-400: #f472b6;
+  --color-candy-500: #e040a0;
+  --color-candy-600: #db2777;
+  --color-candy-700: #be185d;
+  --color-candy-800: #9d174d;
+  --color-candy-900: #831843;
+
+  --font-sans: "DM Sans", "Inter", sans-serif;
+  --font-display: "Plus Jakarta Sans", "Outfit", sans-serif;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid #f8dceb !important;
+  box-shadow: 0 10px 30px -5px rgba(224, 64, 160, 0.08) !important;
+  color: #1f132b !important;
+}
+
+.candy-pill-gradient {
+  background: linear-gradient(135deg, #e040a0 0%, #db2777 100%) !important;
+  box-shadow: 0 8px 20px -4px rgba(224, 64, 160, 0.4) !important;
+}
+
+.candy-bg-mesh {
+  background: radial-gradient(circle at 15% 10%, #ffe4f0 0%, #fff9fc 45%, #f7eff9 100%) !important;
+}
+
 @layer base {
+  :root {
+    --bg-surface: #fff9fc;
+    --surface-container-lowest: #ffffff;
+    --surface-container-low: #fdf2f8;
+    --surface-container: #fce7f3;
+    --surface-container-high: #fbcfe8;
+    --surface-container-highest: #f9a8d4;
+    --surface-bright: #ffffff;
+    
+    --primary: #e040a0;
+    --primary-container: #db2777;
+    --primary-fixed: #fce7f3;
+    --primary-fixed-dim: #f472b6;
+    --on-primary: #ffffff;
+    --on-primary-container: #831843;
+
+    --secondary: #be185d;
+    --secondary-container: #fbcfe8;
+    --on-secondary: #ffffff;
+    
+    --tertiary: #10b981;
+    --tertiary-container: #d1fae5;
+    --tertiary-fixed: #a7f3d0;
+    --tertiary-fixed-dim: #34d399;
+    --on-tertiary: #ffffff;
+
+    --error: #e11d48;
+    --error-container: #ffe4e6;
+    
+    --on-surface: #1f132b;
+    --on-surface-variant: #6b5c77;
+    --outline: #f5d5e5;
+    --outline-variant: #fce7f3;
+  }
+
   body {
-    @apply bg-slate-950 text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-white min-h-screen;
+    background: radial-gradient(circle at 15% 10%, #ffe4f0 0%, #fff9fc 45%, #f7eff9 100%);
+    background-color: #fff9fc;
+    color: #1f132b;
+    font-family: 'DM Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-display, .font-headline {
+    font-family: 'Plus Jakarta Sans', 'Outfit', 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+    color: #1f132b;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
   }
 }
 
-/* Leaflet Map Styles */
+/* Material Symbols compatibility styling */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  vertical-align: middle;
+}
+
+/* Custom Stitch Component Classes */
+.bg-surface { background-color: #0b1326; }
+.bg-surface-container-lowest { background-color: #060e20; }
+.bg-surface-container-low { background-color: #131b2e; }
+.bg-surface-container { background-color: #171f33; }
+.bg-surface-container-high { background-color: #222a3d; }
+.bg-surface-container-highest { background-color: #2d3449; }
+.bg-surface-bright { background-color: #31394d; }
+
+.bg-primary { background-color: #4cd7f6; }
+.bg-primary-container { background-color: #06b6d4; }
+.bg-primary-fixed { background-color: #acedff; }
+.bg-secondary-container { background-color: #0566d9; }
+.bg-tertiary { background-color: #4edea3; }
+.bg-tertiary-container { background-color: #1bbd85; }
+.bg-error-container { background-color: #93000a; }
+
+.text-primary { color: #4cd7f6; }
+.text-primary-fixed { color: #acedff; }
+.text-primary-fixed-dim { color: #4cd7f6; }
+.text-on-primary { color: #003640; }
+.text-on-primary-container { color: #00424f; }
+.text-secondary { color: #adc6ff; }
+.text-on-secondary { color: #002e6a; }
+.text-tertiary { color: #4edea3; }
+.text-tertiary-fixed { color: #6ffbbe; }
+.text-on-tertiary { color: #003824; }
+.text-error { color: #ffb4ab; }
+.text-on-surface { color: #dae2fd; }
+.text-on-surface-variant { color: #bcc9cd; }
+.text-outline { color: #869397; }
+.text-outline-variant { color: #3d494c; }
+
+.border-outline { border-color: #869397; }
+.border-outline-variant { border-color: #3d494c; }
+.border-primary { border-color: #4cd7f6; }
+.border-tertiary { border-color: #4edea3; }
+
+/* Glassmorphism & Cyber Civic Containers */
+.glass-card {
+  background: rgba(13, 21, 39, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  border-radius: 18px;
+}
+
+.glass-card-interactive {
+  background: rgba(13, 21, 39, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+  border-radius: 18px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-interactive:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 16px 40px -10px rgba(6, 182, 212, 0.18), 0 0 0 1px rgba(56, 189, 248, 0.2);
+}
+
+.glass-panel {
+  background: rgba(10, 15, 29, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  border-radius: 20px;
+}
+
+/* Glowing Border & Neon Gradients */
+.glow-cyan {
+  box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.4);
+}
+
+.glow-blue {
+  box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.4);
+}
+
+.glow-violet {
+  box-shadow: 0 0 25px -5px rgba(139, 92, 246, 0.4);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.4);
+}
+
+.text-gradient-cyan-blue {
+  background: linear-gradient(135deg, #22d3ee 0%, #38bdf8 50%, #818cf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-emerald-cyan {
+  background: linear-gradient(135deg, #34d399 0%, #22d3ee 50%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-violet-blue {
+  background: linear-gradient(135deg, #c084fc 0%, #818cf8 50%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.border-gradient-glow {
+  position: relative;
+}
+.border-gradient-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.4), rgba(139, 92, 246, 0.4));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Leaflet Map Custom Container */
 .leaflet-container {
   width: 100%;
   height: 100%;
   z-index: 10;
-  border-radius: 0.75rem;
+  border-radius: 1rem;
+  background: #0a0f1d !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: #0d1527 !important;
+  color: #f1f5f9 !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
+}
+
+.leaflet-popup-tip {
+  background: #0d1527 !important;
+}
+
+.custom-map-pin, .custom-map-marker {
+  background: transparent !important;
+  border: none !important;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #060913;
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 4px;
+  background: #1e293b;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #334155;
 }
 
-/* Pulsing Badge Animation */
+/* Radar & Pulsing Animations */
 @keyframes pulse-ring {
   0% {
     transform: scale(0.95);
@@ -48,4 +294,17 @@
 
 .pulse-warning {
   animation: pulse-ring 2s infinite cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.scanner-beam {
+  animation: scanline 3s linear infinite;
 }

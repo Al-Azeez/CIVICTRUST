@@ -4,6 +4,7 @@ import api from '../../services/api';
 import SLACountdown from '../../components/SLACountdown';
 import VerificationBadge from '../../components/VerificationBadge';
 import ResolutionModal from '../../components/ResolutionModal';
+import AssignWorkerModal from '../../components/AssignWorkerModal';
 import {
   Search,
   Filter,
@@ -15,6 +16,10 @@ import {
   RotateCcw,
   Eye,
   SlidersHorizontal,
+  ExternalLink,
+  Users,
+  Send,
+  Camera,
 } from 'lucide-react';
 
 const CATEGORIES = [
@@ -48,6 +53,7 @@ const AdminComplaints = () => {
   const [status, setStatus] = useState('ALL');
   const [slaStatus, setSlaStatus] = useState('ALL');
   const [resolutionTarget, setResolutionTarget] = useState(null);
+  const [assignTarget, setAssignTarget] = useState(null);
 
   const fetchComplaints = async () => {
     setLoading(true);
@@ -60,7 +66,7 @@ const AdminComplaints = () => {
       if (search) url += `&search=${encodeURIComponent(search)}`;
 
       const res = await api.get(url);
-      setComplaints(res.data.complaints);
+      setComplaints(res.data.complaints || []);
     } catch (error) {
       console.warn('Error fetching admin complaints');
     } finally {
@@ -82,31 +88,31 @@ const AdminComplaints = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit']">
-            Municipal Grievance Operations
+          <h1 className="text-2xl sm:text-3xl font-black text-white font-['Outfit']">
+            Municipal Grievance Operations Table
           </h1>
           <p className="text-xs sm:text-sm text-slate-400">
-            Comprehensive grievance records with resolution claim and photo verification tools
+            Comprehensive grievance records with worker dispatch assignment, resolution claims, and verification audits
           </p>
         </div>
 
-        <div className="text-xs font-mono text-slate-400 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl">
-          Total Records: <strong className="text-emerald-400">{complaints.length}</strong>
+        <div className="text-xs font-mono text-cyan-300 bg-[#0d1527] border border-cyan-500/30 px-3.5 py-1.5 rounded-xl shadow-md">
+          Total Records: <strong className="text-white">{complaints.length}</strong>
         </div>
       </div>
 
       {/* Filter Toolbar */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4 shadow-lg">
+      <div className="bg-[#0d1527]/90 border border-cyan-500/20 rounded-[22px] p-5 space-y-4 shadow-xl backdrop-blur-md">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Search */}
           <form onSubmit={handleSearch} className="relative">
-            <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-500" />
+            <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-500" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search ID, address, notes..."
-              className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+              className="w-full pl-10 pr-3 py-2.5 bg-[#060913] border border-slate-700 rounded-xl text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-colors"
             />
           </form>
 
@@ -114,7 +120,7 @@ const AdminComplaints = () => {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+            className="px-3 py-2.5 bg-[#060913] border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
           >
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>
@@ -127,7 +133,7 @@ const AdminComplaints = () => {
           <select
             value={ward}
             onChange={(e) => setWard(e.target.value)}
-            className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+            className="px-3 py-2.5 bg-[#060913] border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
           >
             {WARDS.map((w) => (
               <option key={w} value={w}>
@@ -140,7 +146,7 @@ const AdminComplaints = () => {
           <select
             value={slaStatus}
             onChange={(e) => setSlaStatus(e.target.value)}
-            className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+            className="px-3 py-2.5 bg-[#060913] border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
           >
             <option value="ALL">All SLA States</option>
             <option value="WITHIN_SLA">Within SLA</option>
@@ -150,16 +156,16 @@ const AdminComplaints = () => {
         </div>
 
         {/* Status Pills */}
-        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-800/60 text-xs">
-          <span className="text-slate-500 font-medium mr-1">Status:</span>
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-white/5 text-xs">
+          <span className="text-slate-400 font-semibold mr-1">Status Filter:</span>
           {['ALL', 'SUBMITTED', 'IN_PROGRESS', 'SUSPICIOUS', 'REOPENED', 'VERIFIED'].map((st) => (
             <button
               key={st}
               onClick={() => setStatus(st)}
-              className={`px-3 py-1 rounded-lg font-medium transition-all ${
+              className={`px-3 py-1 rounded-xl font-semibold transition-all ${
                 status === st
-                  ? 'bg-emerald-600 text-white font-bold shadow'
-                  : 'bg-slate-950 border border-slate-800 text-slate-400 hover:text-slate-200'
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold shadow-md shadow-cyan-950'
+                  : 'bg-[#060913] border border-white/10 text-slate-400 hover:text-slate-200'
               }`}
             >
               {st === 'ALL'
@@ -170,35 +176,38 @@ const AdminComplaints = () => {
                 ? '🔄 Reopened'
                 : st === 'VERIFIED'
                 ? '✅ Verified'
-                : st}
+                : st === 'IN_PROGRESS'
+                ? '🛠️ In Progress'
+                : 'Pending'}
             </button>
           ))}
         </div>
       </div>
 
       {/* Complaints Table */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden shadow-xl">
+      <div className="rounded-[22px] border border-white/10 bg-[#0d1527]/90 overflow-hidden shadow-2xl backdrop-blur-md">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-300">
-            <thead className="bg-slate-950/80 text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-800 font-semibold">
+            <thead className="bg-[#060913] text-[11px] uppercase tracking-wider text-slate-400 border-b border-white/10 font-bold">
               <tr>
                 <th className="px-4 py-3.5">ID & Category</th>
                 <th className="px-4 py-3.5">Location & Ward</th>
+                <th className="px-4 py-3.5">Assigned Crew</th>
                 <th className="px-4 py-3.5">SLA Target & Clock</th>
                 <th className="px-4 py-3.5">Verification Status</th>
-                <th className="px-4 py-3.5 text-right">Actions</th>
+                <th className="px-4 py-3.5 text-right">Operations</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 font-medium">
+            <tbody className="divide-y divide-white/5 font-medium">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-12 text-center text-slate-500">
+                  <td colSpan={6} className="px-4 py-12 text-center text-slate-400">
                     Loading records...
                   </td>
                 </tr>
               ) : complaints.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-12 text-center text-slate-500">
+                  <td colSpan={6} className="px-4 py-12 text-center text-slate-400">
                     No complaints match criteria.
                   </td>
                 </tr>
@@ -207,26 +216,50 @@ const AdminComplaints = () => {
                   <tr key={c._id || c.complaintId} className="hover:bg-slate-800/40 transition-colors">
                     {/* ID & Category */}
                     <td className="px-4 py-3.5">
-                      <div className="font-mono font-bold text-white text-xs">
+                      <div className="font-mono font-bold text-cyan-300 text-xs">
                         {c.complaintId}
                       </div>
-                      <div className="text-slate-300 font-semibold mt-0.5">
+                      <div className="text-white font-bold mt-0.5 font-['Outfit']">
                         {c.category}
                       </div>
-                      <div className="text-[11px] text-slate-500 line-clamp-1 max-w-xs mt-0.5">
+                      <div className="text-[11px] text-slate-400 line-clamp-1 max-w-xs mt-0.5">
                         {c.description}
                       </div>
                     </td>
 
                     {/* Location & Ward */}
                     <td className="px-4 py-3.5">
-                      <div className="text-slate-200 font-semibold flex items-center gap-1">
-                        <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                        <span>{c.ward}</span>
+                      <div className="text-slate-200 font-semibold flex items-center justify-between gap-1">
+                        <div className="flex items-center gap-1">
+                          <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                          <span>{c.ward}</span>
+                        </div>
+                        {c.latitude && c.longitude && (
+                          <span className="text-[10px] text-cyan-400 font-mono">
+                            GIS Pinned
+                          </span>
+                        )}
                       </div>
-                      <div className="text-[11px] text-slate-400 mt-0.5">
+                      <div className="text-[11px] text-slate-400 mt-0.5 truncate max-w-[180px]">
                         {c.address || 'Civic Point'}
                       </div>
+                    </td>
+
+                    {/* Assigned Crew */}
+                    <td className="px-4 py-3.5">
+                      {c.assignedWorker ? (
+                        <div className="space-y-0.5">
+                          <span className="text-white font-bold block">{c.assignedWorker.name}</span>
+                          <span className="text-[10px] text-slate-400 block truncate max-w-[140px]">{c.assignedWorker.team}</span>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setAssignTarget(c)}
+                          className="px-2 py-1 rounded-lg bg-violet-950/60 border border-violet-500/30 text-violet-300 text-[11px] font-bold flex items-center gap-1 hover:bg-violet-900/60"
+                        >
+                          <Send className="w-3 h-3" /> Assign Crew
+                        </button>
+                      )}
                     </td>
 
                     {/* SLA Status & Clock */}
@@ -262,22 +295,30 @@ const AdminComplaints = () => {
 
                     {/* Actions */}
                     <td className="px-4 py-3.5 text-right">
-                      <div className="inline-flex items-center gap-2">
+                      <div className="inline-flex items-center gap-1.5">
+                        <button
+                          onClick={() => setAssignTarget(c)}
+                          className="p-1.5 rounded-lg bg-[#060913] hover:bg-slate-800 text-violet-300 border border-violet-500/30"
+                          title="Assign Field Crew"
+                        >
+                          <Users className="w-3.5 h-3.5" />
+                        </button>
+
                         <button
                           onClick={() => setResolutionTarget(c)}
-                          className="px-2.5 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-semibold text-xs flex items-center gap-1 transition-colors"
-                          title="Claim resolution & run vision verification"
+                          className="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-xs flex items-center gap-1 transition-colors shadow"
+                          title="Capture Resolution Evidence & Verify"
                         >
-                          <Sparkles className="w-3.5 h-3.5" />
+                          <Camera className="w-3.5 h-3.5" />
                           Resolve
                         </button>
+
                         <Link
                           to={`/citizen/complaints/${c._id || c.complaintId}`}
-                          className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700 flex items-center gap-1 transition-colors"
+                          className="p-1.5 rounded-xl bg-[#060913] hover:bg-slate-800 text-slate-300 border border-white/10 hover:text-white transition-colors"
                           title="Inspect evidence details"
                         >
                           <Eye className="w-3.5 h-3.5" />
-                          Inspect
                         </Link>
                       </div>
                     </td>
@@ -294,6 +335,14 @@ const AdminComplaints = () => {
         complaint={resolutionTarget}
         isOpen={!!resolutionTarget}
         onClose={() => setResolutionTarget(null)}
+        onSuccess={() => fetchComplaints()}
+      />
+
+      {/* Worker Dispatch Assignment Modal */}
+      <AssignWorkerModal
+        complaint={assignTarget}
+        isOpen={!!assignTarget}
+        onClose={() => setAssignTarget(null)}
         onSuccess={() => fetchComplaints()}
       />
     </div>

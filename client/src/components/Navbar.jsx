@@ -17,6 +17,12 @@ import {
   Menu,
   X,
   Sparkles,
+  Layers,
+  MapPin,
+  CheckCircle2,
+  AlertTriangle,
+  Scan,
+  Activity
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -28,11 +34,11 @@ const Navbar = () => {
   const [isResetting, setIsResetting] = useState(false);
 
   const handleResetData = async () => {
-    if (window.confirm('Reset all demo complaints and verifications back to standard sample state?')) {
+    if (window.confirm('Reset all demo complaints, master incidents, and verifications back to baseline?')) {
       setIsResetting(true);
       try {
         await api.post('/seed/reset');
-        addToast('Demo data successfully reset to initial baseline.', 'success');
+        addToast('Demo data successfully reset to baseline.', 'success');
         window.location.reload();
       } catch (error) {
         addToast('Failed to reset demo data', 'error');
@@ -45,124 +51,139 @@ const Navbar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-950/85 backdrop-blur-md border-b border-slate-800/80">
+    <header className="sticky top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-pink-100 shadow-sm transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Brand Logo & Tagline */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-500 p-0.5 shadow-lg shadow-emerald-950/50 group-hover:scale-105 transition-transform">
-              <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                <ShieldCheck className="w-5 h-5 text-emerald-400" />
+          {/* Brand Logo & Gov-Tech Badge */}
+          <div className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-2.5 group">
+              <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-400 flex items-center justify-center shadow-md shadow-pink-200 group-hover:scale-105 transition-transform duration-300">
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 5-4.5 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9z" />
+                </svg>
               </div>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-bold tracking-tight text-white font-['Outfit'] flex items-center gap-1.5">
-                CivicTrust
-                <span className="text-[10px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  PS-D04
+
+              <div className="flex flex-col">
+                <span className="font-['Plus_Jakarta_Sans',sans-serif] text-xl font-extrabold tracking-tight text-gray-900">
+                  Civic<span className="text-[#e040a0]">Trust</span>
                 </span>
-              </span>
-              <span className="text-[11px] text-slate-400 font-medium tracking-wide">
-                Resolved should mean resolved.
+              </div>
+            </Link>
+
+            <div className="hidden xl:flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-50 border border-pink-200">
+              <span className="w-2 h-2 rounded-full bg-[#e040a0] animate-pulse" />
+              <span className="text-[10px] font-bold text-pink-700 uppercase tracking-wider">
+                Real Issues. Real Evidence. Real Accountability.
               </span>
             </div>
-          </Link>
+          </div>
 
           {/* Navigation Links for Desktop */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1 bg-pink-50/60 p-1 rounded-full border border-pink-200/80 backdrop-blur-md">
             {isAuthenticated ? (
               isAdmin ? (
                 <>
                   <Link
                     to="/admin/dashboard"
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
                       isActive('/admin/dashboard')
-                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                        : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                        ? 'bg-[#e040a0] text-white shadow-sm font-bold'
+                        : 'text-gray-600 hover:text-[#e040a0] hover:bg-white/80'
                     }`}
                   >
-                    <LayoutDashboard className="w-4 h-4" />
+                    <LayoutDashboard className="w-3.5 h-3.5" />
                     Dashboard
                   </Link>
                   <Link
                     to="/admin/complaints"
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
                       isActive('/admin/complaints')
-                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                        : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                        ? 'bg-[#e040a0] text-white shadow-sm font-bold'
+                        : 'text-gray-600 hover:text-[#e040a0] hover:bg-white/80'
                     }`}
                   >
-                    <ClipboardList className="w-4 h-4" />
+                    <ClipboardList className="w-3.5 h-3.5" />
                     Complaints
                   </Link>
                   <Link
                     to="/admin/verification"
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
                       isActive('/admin/verification')
-                        ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                        : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                        ? 'bg-[#e040a0] text-white shadow-sm font-bold'
+                        : 'text-gray-600 hover:text-[#e040a0] hover:bg-white/80'
                     }`}
                   >
-                    <ShieldCheck className="w-4 h-4 text-amber-400" />
-                    Review Suspicious
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    Review Audits
+                  </Link>
+                  <Link
+                    to="/admin/osint"
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                      isActive('/admin/osint')
+                        ? 'bg-[#e040a0] text-white shadow-sm font-bold'
+                        : 'text-[#db2777] font-bold hover:text-[#be185d] hover:bg-white/80'
+                    }`}
+                  >
+                    <Scan className="w-3.5 h-3.5" />
+                    OSINT Verification
                   </Link>
                   <Link
                     to="/admin/hotspots"
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
                       isActive('/admin/hotspots')
-                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                        : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                        ? 'bg-[#e040a0] text-white shadow-sm font-bold'
+                        : 'text-gray-600 hover:text-[#e040a0] hover:bg-white/80'
                     }`}
                   >
-                    <Flame className="w-4 h-4 text-rose-400" />
-                    Hotspot Map
+                    <Flame className="w-3.5 h-3.5" />
+                    Hotspots
                   </Link>
                   <Link
                     to="/admin/analytics"
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
                       isActive('/admin/analytics')
-                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                        : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                        ? 'bg-[#e040a0] text-white shadow-sm font-bold'
+                        : 'text-gray-600 hover:text-[#e040a0] hover:bg-white/80'
                     }`}
                   >
-                    <BarChart3 className="w-4 h-4" />
-                    Ward Analytics
+                    <BarChart3 className="w-3.5 h-3.5" />
+                    Analytics
                   </Link>
                 </>
               ) : (
                 <>
                   <Link
                     to="/citizen/dashboard"
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
                       isActive('/citizen/dashboard')
-                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                        : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                        ? 'bg-[#e040a0] text-white shadow-sm font-bold'
+                        : 'text-gray-600 hover:text-[#e040a0] hover:bg-white/80'
                     }`}
                   >
-                    <LayoutDashboard className="w-4 h-4" />
-                    Dashboard
+                    <LayoutDashboard className="w-3.5 h-3.5" />
+                    Citizen Portal
                   </Link>
                   <Link
                     to="/citizen/report"
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
                       isActive('/citizen/report')
-                        ? 'bg-emerald-600 text-white font-semibold shadow-lg shadow-emerald-950/50'
-                        : 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-600/30'
+                        ? 'candy-pill-gradient text-white shadow-md shadow-pink-300'
+                        : 'bg-pink-100 text-[#be185d] border border-pink-200 hover:bg-pink-200'
                     }`}
                   >
-                    <PlusCircle className="w-4 h-4" />
+                    <PlusCircle className="w-3.5 h-3.5" />
                     Report Issue
                   </Link>
                   <Link
                     to="/citizen/complaints"
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
                       isActive('/citizen/complaints')
-                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                        : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                        ? 'bg-[#e040a0] text-white shadow-sm font-bold'
+                        : 'text-gray-600 hover:text-[#e040a0] hover:bg-white/80'
                     }`}
                   >
-                    <ClipboardList className="w-4 h-4" />
-                    My Complaints
+                    <ClipboardList className="w-3.5 h-3.5" />
+                    My Grievances
                   </Link>
                 </>
               )
@@ -170,90 +191,114 @@ const Navbar = () => {
               <>
                 <Link
                   to="/"
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                    isActive('/') ? 'text-emerald-400' : 'text-slate-300 hover:text-white'
+                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                    isActive('/') ? 'bg-[#e040a0] text-white shadow-sm' : 'text-gray-600 hover:text-[#e040a0] hover:bg-white/80'
                   }`}
                 >
-                  Overview
+                  Landing Page
+                </Link>
+                <Link
+                  to="/citizen/dashboard"
+                  className="px-3.5 py-1.5 rounded-full text-xs font-medium text-gray-600 hover:text-[#e040a0] hover:bg-white/80 transition-all"
+                >
+                  Citizen Portal
+                </Link>
+                <Link
+                  to="/admin/dashboard"
+                  className="px-3.5 py-1.5 rounded-full text-xs font-medium text-gray-600 hover:text-[#e040a0] hover:bg-white/80 transition-all"
+                >
+                  Admin Analytics
+                </Link>
+                <Link
+                  to="/admin/osint"
+                  className="px-3.5 py-1.5 rounded-full text-xs font-medium text-gray-600 hover:text-[#e040a0] hover:bg-white/80 transition-all"
+                >
+                  OSINT Verification
                 </Link>
               </>
             )}
           </nav>
 
-          {/* Right Action Bar: Quick Role Switcher + Auth + Reset */}
-          <div className="hidden lg:flex items-center gap-3">
-            {/* Quick 1-Click Role Switcher for Hackathon Testing */}
-            <div className="flex items-center bg-slate-900/90 border border-slate-800 rounded-lg p-1 text-xs">
-              <span className="text-slate-500 px-2 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-amber-400" />
+          {/* Right Action Bar: Live Mesh status, Quick Demo Role Switcher & User Profile */}
+          <div className="hidden md:flex items-center gap-2.5">
+            {/* Live Mesh Status Pill */}
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-xs text-emerald-700 font-semibold shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Live Mesh</span>
+              <span className="text-emerald-600/70 border-l border-emerald-300 pl-1.5 text-[11px]">18ms</span>
+            </div>
+
+            {/* Quick Demo Switcher */}
+            <div className="flex items-center bg-pink-50/80 border border-pink-200/90 rounded-full p-0.5 text-xs backdrop-blur-md">
+              <span className="text-pink-700 px-2 flex items-center gap-1 text-[11px] font-bold">
+                <Sparkles className="w-3 h-3 text-[#e040a0]" />
                 Demo:
               </span>
               <button
                 onClick={() => quickLogin('citizen')}
-                className={`px-2 py-1 rounded transition-colors font-medium flex items-center gap-1 ${
+                className={`px-2.5 py-1 rounded-full transition-all text-[11px] font-bold flex items-center gap-1 ${
                   isCitizen
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                    ? 'bg-[#e040a0] text-white shadow-xs'
+                    : 'text-gray-700 hover:text-pink-700 hover:bg-white/80'
                 }`}
-                title="Log in as Citizen (Aarav Sharma)"
+                title="Log in as Abdul (Citizen)"
               >
                 <User className="w-3 h-3" />
-                Citizen
+                Abdul
               </button>
               <button
                 onClick={() => quickLogin('admin')}
-                className={`px-2 py-1 rounded transition-colors font-medium flex items-center gap-1 ${
+                className={`px-2.5 py-1 rounded-full transition-all text-[11px] font-bold flex items-center gap-1 ${
                   isAdmin
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                    ? 'bg-[#db2777] text-white shadow-xs'
+                    : 'text-gray-700 hover:text-pink-700 hover:bg-white/80'
                 }`}
-                title="Log in as Reviewer (Municipal Review Officer)"
+                title="Log in as Azeez (Senior Verifier)"
               >
                 <Shield className="w-3 h-3" />
-                Reviewer
+                Azeez
               </button>
             </div>
 
-            {/* Reset Button */}
+            {/* Reset Data Button */}
             <button
               onClick={handleResetData}
               disabled={isResetting}
-              className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-900 rounded-lg border border-slate-800 transition-colors"
-              title="Reset Demo Data"
+              className="p-1.5 text-pink-700 hover:text-pink-900 hover:bg-pink-100/70 rounded-full border border-pink-200 transition-all"
+              title="Reset Demo Data to Baseline"
             >
-              <RotateCcw className={`w-4 h-4 ${isResetting ? 'animate-spin' : ''}`} />
+              <RotateCcw className={`w-3.5 h-3.5 ${isResetting ? 'animate-spin text-[#e040a0]' : ''}`} />
             </button>
 
-            {/* User Profile / Login */}
+            {/* Auth / Profile Area */}
             {isAuthenticated ? (
-              <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
-                <div className="flex flex-col text-right">
-                  <span className="text-xs font-semibold text-white leading-tight">
-                    {user?.name}
-                  </span>
-                  <span className="text-[10px] text-emerald-400 font-medium uppercase tracking-wider">
-                    {user?.role}
-                  </span>
+              <div className="flex items-center gap-2 pl-2 border-l border-pink-200">
+                <div className="w-8 h-8 rounded-full bg-pink-100 border border-pink-200 flex items-center justify-center font-bold text-xs text-pink-700">
+                  {user?.name ? user.name.substring(0, 2).toUpperCase() : 'AZ'}
+                </div>
+                <div className="hidden xl:block text-left text-xs leading-tight">
+                  <p className="font-bold text-gray-800">{user?.name}</p>
+                  <p className="text-gray-400 text-[10px]">{user?.role === 'admin' ? 'Senior Verifier' : user?.ward || 'Citizen'}</p>
                 </div>
                 <button
                   onClick={logout}
-                  className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-950/20 rounded-lg border border-transparent hover:border-rose-900/30 transition-colors"
+                  className="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-full transition-colors ml-1"
                   title="Logout"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-3.5 h-3.5" />
                 </button>
               </div>
             ) : (
               <div className="flex items-center gap-2">
                 <Link
                   to="/login"
-                  className="px-3 py-1.5 text-sm font-medium text-slate-300 hover:text-white transition-colors"
+                  className="px-3.5 py-1.5 text-xs font-semibold text-gray-700 hover:text-[#e040a0] rounded-full hover:bg-pink-50 transition-colors"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/register"
-                  className="px-3.5 py-1.5 text-sm font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-950 transition-colors"
+                  className="candy-pill-gradient px-4 py-1.5 text-xs font-bold rounded-full text-white hover:opacity-95 shadow-md shadow-pink-200 transition-all"
                 >
                   Register
                 </Link>
@@ -261,13 +306,13 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile menu toggle */}
-          <div className="flex md:hidden items-center gap-2">
+          {/* Mobile Menu Button */}
+          <div className="flex lg:hidden items-center gap-2">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg"
+              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-pink-50 rounded-full border border-pink-200"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
@@ -275,45 +320,52 @@ const Navbar = () => {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b border-slate-800 bg-slate-950/95 backdrop-blur-lg px-4 pt-2 pb-6 space-y-3">
-          <div className="flex flex-col gap-1">
+        <div className="lg:hidden border-b border-pink-200 bg-white/95 backdrop-blur-2xl px-4 pt-3 pb-6 space-y-3">
+          <div className="flex flex-col gap-1.5">
             {isAuthenticated ? (
               isAdmin ? (
                 <>
                   <Link
                     to="/admin/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-900 flex items-center gap-2"
+                    className="px-3.5 py-2.5 rounded-full text-xs font-semibold text-gray-800 hover:bg-pink-50 flex items-center gap-2"
                   >
-                    <LayoutDashboard className="w-4 h-4" /> Dashboard
+                    <LayoutDashboard className="w-4 h-4 text-[#e040a0]" /> Dashboard
                   </Link>
                   <Link
                     to="/admin/complaints"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-900 flex items-center gap-2"
+                    className="px-3.5 py-2.5 rounded-full text-xs font-semibold text-gray-800 hover:bg-pink-50 flex items-center gap-2"
                   >
-                    <ClipboardList className="w-4 h-4" /> Complaints
+                    <ClipboardList className="w-4 h-4 text-[#db2777]" /> Complaints
                   </Link>
                   <Link
                     to="/admin/verification"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-lg text-sm font-medium text-amber-400 hover:bg-slate-900 flex items-center gap-2"
+                    className="px-3.5 py-2.5 rounded-full text-xs font-semibold text-gray-800 hover:bg-pink-50 flex items-center gap-2"
                   >
-                    <ShieldCheck className="w-4 h-4" /> Review Suspicious
+                    <ShieldCheck className="w-4 h-4 text-emerald-600" /> Review Audits
                   </Link>
                   <Link
                     to="/admin/hotspots"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-900 flex items-center gap-2"
+                    className="px-3.5 py-2.5 rounded-full text-xs font-semibold text-gray-800 hover:bg-pink-50 flex items-center gap-2"
                   >
-                    <Flame className="w-4 h-4" /> Hotspot Map
+                    <Flame className="w-4 h-4 text-rose-500" /> Hotspots
                   </Link>
                   <Link
                     to="/admin/analytics"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-900 flex items-center gap-2"
+                    className="px-3.5 py-2.5 rounded-full text-xs font-semibold text-gray-800 hover:bg-pink-50 flex items-center gap-2"
                   >
-                    <BarChart3 className="w-4 h-4" /> Ward Analytics
+                    <BarChart3 className="w-4 h-4 text-purple-600" /> Ward Analytics
+                  </Link>
+                  <Link
+                    to="/admin/osint"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-3.5 py-2.5 rounded-full text-xs font-semibold text-[#be185d] hover:bg-pink-50 flex items-center gap-2"
+                  >
+                    <Scan className="w-4 h-4 text-[#e040a0]" /> OSINT Verification
                   </Link>
                 </>
               ) : (
@@ -321,23 +373,23 @@ const Navbar = () => {
                   <Link
                     to="/citizen/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-900 flex items-center gap-2"
+                    className="px-3.5 py-2.5 rounded-full text-xs font-semibold text-gray-800 hover:bg-pink-50 flex items-center gap-2"
                   >
-                    <LayoutDashboard className="w-4 h-4" /> Dashboard
+                    <LayoutDashboard className="w-4 h-4 text-[#e040a0]" /> Dashboard
                   </Link>
                   <Link
                     to="/citizen/report"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-lg text-sm font-semibold bg-emerald-600 text-white flex items-center gap-2"
+                    className="px-3.5 py-2.5 rounded-full text-xs font-bold candy-pill-gradient text-white flex items-center gap-2"
                   >
                     <PlusCircle className="w-4 h-4" /> Report Issue
                   </Link>
                   <Link
                     to="/citizen/complaints"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-900 flex items-center gap-2"
+                    className="px-3.5 py-2.5 rounded-full text-xs font-semibold text-gray-800 hover:bg-pink-50 flex items-center gap-2"
                   >
-                    <ClipboardList className="w-4 h-4" /> My Complaints
+                    <ClipboardList className="w-4 h-4 text-[#db2777]" /> My Complaints
                   </Link>
                 </>
               )
@@ -346,14 +398,14 @@ const Navbar = () => {
                 <Link
                   to="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2 text-sm font-medium rounded-lg bg-slate-900 text-slate-200 border border-slate-800"
+                  className="w-full text-center py-2.5 text-xs font-semibold rounded-full bg-pink-50 text-gray-800 border border-pink-200"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/register"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2 text-sm font-semibold rounded-lg bg-emerald-600 text-white"
+                  className="w-full text-center py-2.5 text-xs font-bold rounded-full candy-pill-gradient text-white shadow-md shadow-pink-300"
                 >
                   Register
                 </Link>
@@ -361,27 +413,26 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Fast Switcher in Mobile */}
-          <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
-            <span className="text-xs text-slate-400">Quick Demo Switch:</span>
+          <div className="pt-3 border-t border-pink-200 flex items-center justify-between">
+            <span className="text-xs text-gray-500 font-medium">Quick Demo:</span>
             <div className="flex gap-2">
               <button
                 onClick={() => {
                   quickLogin('citizen');
                   setMobileMenuOpen(false);
                 }}
-                className="px-2.5 py-1 text-xs rounded bg-slate-900 border border-slate-700 text-slate-200"
+                className="px-3 py-1 text-xs rounded-full bg-pink-100 border border-pink-300 text-pink-800 font-bold"
               >
-                Citizen
+                Abdul
               </button>
               <button
                 onClick={() => {
                   quickLogin('admin');
                   setMobileMenuOpen(false);
                 }}
-                className="px-2.5 py-1 text-xs rounded bg-indigo-950 border border-indigo-700 text-indigo-200"
+                className="px-3 py-1 text-xs rounded-full bg-pink-200 border border-pink-300 text-pink-900 font-bold"
               >
-                Reviewer
+                Azeez
               </button>
             </div>
           </div>
