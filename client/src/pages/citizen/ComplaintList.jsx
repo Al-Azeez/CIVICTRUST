@@ -13,6 +13,8 @@ import {
   Clock,
   Sparkles,
   MapPin,
+  ExternalLink,
+  Camera,
 } from 'lucide-react';
 
 const CATEGORIES = [
@@ -55,7 +57,7 @@ const ComplaintList = () => {
       if (search) url += `&search=${encodeURIComponent(search)}`;
 
       const res = await api.get(url);
-      setComplaints(res.data.complaints);
+      setComplaints(res.data.complaints || []);
     } catch (e) {
       console.warn('Error fetching complaint list');
     } finally {
@@ -77,7 +79,7 @@ const ComplaintList = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit']">
+          <h1 className="text-2xl sm:text-3xl font-black text-white font-['Outfit']">
             Civic Grievance Records
           </h1>
           <p className="text-xs sm:text-sm text-slate-400">
@@ -87,7 +89,7 @@ const ComplaintList = () => {
 
         <Link
           to="/citizen/report"
-          className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-950 flex items-center gap-2 transition-all"
+          className="px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-violet-600 hover:from-cyan-400 hover:to-violet-500 text-white font-extrabold text-xs shadow-lg shadow-cyan-950 flex items-center gap-2 transition-all transform hover:-translate-y-0.5"
         >
           <PlusCircle className="w-4 h-4" />
           Report New Issue
@@ -95,17 +97,17 @@ const ComplaintList = () => {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4 shadow-lg">
+      <div className="bg-[#0d1527]/90 border border-cyan-500/20 rounded-[22px] p-5 space-y-4 shadow-xl backdrop-blur-md">
         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {/* Search Input */}
           <form onSubmit={handleSearchSubmit} className="relative sm:col-span-2 lg:col-span-1">
-            <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-500" />
+            <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-500" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search ID, keyword, address..."
-              className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+              className="w-full pl-10 pr-3 py-2.5 bg-[#060913] border border-slate-700 rounded-xl text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-500"
             />
           </form>
 
@@ -113,7 +115,7 @@ const ComplaintList = () => {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+            className="px-3 py-2.5 bg-[#060913] border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
           >
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>
@@ -126,7 +128,7 @@ const ComplaintList = () => {
           <select
             value={ward}
             onChange={(e) => setWard(e.target.value)}
-            className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+            className="px-3 py-2.5 bg-[#060913] border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
           >
             {WARDS.map((w) => (
               <option key={w} value={w}>
@@ -135,26 +137,26 @@ const ComplaintList = () => {
             ))}
           </select>
 
-          {/* Search Button for manual trigger */}
+          {/* Search Button */}
           <button
             onClick={fetchComplaints}
-            className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition-colors"
+            className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 transition-colors"
           >
             Apply Filters
           </button>
         </div>
 
         {/* Status Quick Pills */}
-        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-800/60 text-xs">
-          <span className="text-slate-500 font-medium mr-1">Status:</span>
-          {['ALL', 'SUBMITTED', 'SUSPICIOUS', 'REOPENED', 'VERIFIED'].map((st) => (
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-white/5 text-xs">
+          <span className="text-slate-400 font-semibold mr-1">Status:</span>
+          {['ALL', 'SUBMITTED', 'IN_PROGRESS', 'SUSPICIOUS', 'REOPENED', 'VERIFIED'].map((st) => (
             <button
               key={st}
               onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1 rounded-lg font-medium transition-all ${
+              className={`px-3 py-1 rounded-xl font-semibold transition-all ${
                 statusFilter === st
-                  ? 'bg-emerald-600 text-white font-bold shadow'
-                  : 'bg-slate-950 border border-slate-800 text-slate-400 hover:text-slate-200'
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold shadow-md shadow-cyan-950'
+                  : 'bg-[#060913] border border-white/10 text-slate-400 hover:text-slate-200'
               }`}
             >
               {st === 'ALL'
@@ -165,6 +167,8 @@ const ComplaintList = () => {
                 ? '🔄 Reopened'
                 : st === 'VERIFIED'
                 ? '✅ Verified'
+                : st === 'IN_PROGRESS'
+                ? '🛠️ In Progress'
                 : 'Pending'}
             </button>
           ))}
@@ -173,13 +177,13 @@ const ComplaintList = () => {
 
       {/* Complaints Grid */}
       {loading ? (
-        <div className="py-12 text-center text-slate-400 text-sm">
+        <div className="py-16 text-center text-slate-400 text-sm">
           Loading grievance records...
         </div>
       ) : complaints.length === 0 ? (
-        <div className="p-12 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-3">
+        <div className="p-12 rounded-2xl bg-[#0d1527] border border-white/10 text-center space-y-3">
           <ClipboardList className="w-12 h-12 text-slate-600 mx-auto" />
-          <p className="text-base text-slate-300 font-medium">No complaints match your filter criteria.</p>
+          <p className="text-base text-slate-300 font-bold">No complaints match your filter criteria.</p>
           <button
             onClick={() => {
               setCategory('All Categories');
@@ -187,7 +191,7 @@ const ComplaintList = () => {
               setStatusFilter('ALL');
               setSearch('');
             }}
-            className="text-xs text-emerald-400 hover:underline font-semibold"
+            className="text-xs text-cyan-400 hover:underline font-bold"
           >
             Clear all filters
           </button>
@@ -197,11 +201,11 @@ const ComplaintList = () => {
           {complaints.map((c) => (
             <div
               key={c._id || c.complaintId}
-              className="p-5 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col justify-between shadow-lg space-y-4 hover:border-slate-700 transition-colors"
+              className="p-5 rounded-[22px] bg-[#0d1527]/85 border border-white/10 hover:border-cyan-500/30 flex flex-col justify-between shadow-xl space-y-4 transition-all"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold text-slate-300">
+                  <span className="font-mono text-xs font-bold text-cyan-400 bg-cyan-950/60 px-2.5 py-0.5 rounded-lg border border-cyan-500/30">
                     {c.complaintId}
                   </span>
                   <VerificationBadge
@@ -212,13 +216,30 @@ const ComplaintList = () => {
                   />
                 </div>
 
+                {c.beforePhoto && (
+                  <div className="relative rounded-xl overflow-hidden border border-white/5 bg-[#060913] h-32">
+                    <img
+                      src={c.beforePhoto}
+                      alt="Grievance Evidence"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+
                 <div className="space-y-1">
                   <h3 className="font-bold text-white text-base font-['Outfit']">
                     {c.category}
                   </h3>
-                  <div className="text-xs text-emerald-400/90 font-medium flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                    <span>{c.ward}</span>
+                  <div className="text-xs text-slate-300 font-medium flex items-center justify-between gap-1">
+                    <div className="flex items-center gap-1 truncate">
+                      <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                      <span className="truncate">{c.address || c.ward}</span>
+                    </div>
+                    {c.latitude && c.longitude && (
+                      <span className="text-[10px] text-cyan-400 font-mono shrink-0">
+                        GIS Pinned
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -227,13 +248,13 @@ const ComplaintList = () => {
                 </p>
 
                 {c.status === 'SUSPICIOUS' && (
-                  <div className="text-[11px] text-rose-300 bg-rose-950/50 p-2 rounded-lg border border-rose-900/40">
-                    <strong>⚠️ AI Advisory:</strong> {c.verificationReason || 'Residual debris present.'}
+                  <div className="text-[11px] text-rose-300 bg-rose-950/50 p-2.5 rounded-xl border border-rose-900/40">
+                    <strong>⚠️ AI Finding:</strong> {c.verificationReason || 'Residual debris present.'}
                   </div>
                 )}
               </div>
 
-              <div className="space-y-3 pt-2 border-t border-slate-800/80">
+              <div className="space-y-3 pt-2 border-t border-white/5">
                 <SLACountdown
                   submittedAt={c.submittedAt}
                   slaDeadline={c.slaDeadline}
@@ -245,7 +266,7 @@ const ComplaintList = () => {
 
                 <Link
                   to={`/citizen/complaints/${c._id || c.complaintId}`}
-                  className="block text-center py-2 px-3 rounded-xl bg-slate-950 border border-slate-800 hover:bg-slate-800 text-xs font-bold text-slate-200 transition-colors"
+                  className="block text-center py-2.5 px-3 rounded-xl bg-[#060913] border border-cyan-500/20 hover:border-cyan-500/40 text-xs font-bold text-cyan-300 hover:text-white transition-colors"
                 >
                   Inspect Evidence & Timeline →
                 </Link>

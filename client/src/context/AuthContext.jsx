@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Quick 1-click Demo Login for Hackathon Evaluation
+  // Quick 1-click Demo Login for Evaluation
   const quickLogin = async (role) => {
     if (role === 'admin') {
       return await login('admin@civictrust.org', 'Admin@123');

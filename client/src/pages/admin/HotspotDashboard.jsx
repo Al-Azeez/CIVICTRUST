@@ -11,7 +11,7 @@ const HotspotDashboard = () => {
     const fetchHotspots = async () => {
       try {
         const res = await api.get('/analytics/hotspots');
-        setPoints(res.data.points);
+        setPoints(res.data.points || []);
       } catch (e) {
         console.warn('Error fetching hotspot data');
       } finally {
@@ -29,11 +29,11 @@ const HotspotDashboard = () => {
     <div className="space-y-6 py-6">
       {/* Header */}
       <div className="space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold">
-          <Flame className="w-3.5 h-3.5" />
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-300 text-xs font-bold uppercase tracking-wider">
+          <Flame className="w-3.5 h-3.5 text-rose-400" />
           Geospatial Grievance & Resolution Density Map
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit']">
+        <h1 className="text-2xl sm:text-3xl font-black text-white font-['Outfit']">
           Civic Hotspots & Resolution Cluster Map
         </h1>
         <p className="text-xs sm:text-sm text-slate-400">
@@ -43,41 +43,41 @@ const HotspotDashboard = () => {
 
       {/* Quick Metric Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
-          <div className="text-xs text-slate-400 font-medium">Mapped Incidents</div>
-          <div className="text-2xl font-bold font-mono text-white mt-1">
+        <div className="p-4 rounded-2xl bg-[#0d1527]/85 border border-white/10 shadow-lg">
+          <div className="text-xs text-slate-400 font-semibold uppercase">Mapped Incidents</div>
+          <div className="text-3xl font-black font-mono text-white mt-1">
             {points.length}
           </div>
-          <div className="text-[10px] text-slate-500 mt-0.5">Active coordinate points</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">Active coordinate pins</div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-slate-900 border border-rose-900/40">
-          <div className="text-xs text-rose-400 font-medium">Suspicious / Reopened</div>
-          <div className="text-2xl font-bold font-mono text-rose-300 mt-1">
+        <div className="p-4 rounded-2xl bg-[#0d1527]/85 border border-rose-500/20 shadow-lg">
+          <div className="text-xs text-rose-400 font-semibold uppercase">Suspicious / Reopened</div>
+          <div className="text-3xl font-black font-mono text-rose-300 mt-1">
             {suspiciousCount}
           </div>
-          <div className="text-[10px] text-rose-400/70 mt-0.5">High audit priority</div>
+          <div className="text-[10px] text-rose-400/80 mt-0.5">High audit priority</div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-slate-900 border border-amber-900/40">
-          <div className="text-xs text-amber-400 font-medium">SLA Breached</div>
-          <div className="text-2xl font-bold font-mono text-amber-300 mt-1">
+        <div className="p-4 rounded-2xl bg-[#0d1527]/85 border border-amber-500/20 shadow-lg">
+          <div className="text-xs text-amber-400 font-semibold uppercase">SLA Breached</div>
+          <div className="text-3xl font-black font-mono text-amber-300 mt-1">
             {breachedCount}
           </div>
-          <div className="text-[10px] text-amber-400/70 mt-0.5">Overdue resolution target</div>
+          <div className="text-[10px] text-amber-400/80 mt-0.5">Overdue resolution target</div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-slate-900 border border-emerald-900/40">
-          <div className="text-xs text-emerald-400 font-medium">Verified Clean</div>
-          <div className="text-2xl font-bold font-mono text-emerald-300 mt-1">
+        <div className="p-4 rounded-2xl bg-[#0d1527]/85 border border-emerald-500/20 shadow-lg">
+          <div className="text-xs text-emerald-400 font-semibold uppercase">Verified Clean</div>
+          <div className="text-3xl font-black font-mono text-emerald-300 mt-1">
             {verifiedCount}
           </div>
-          <div className="text-[10px] text-emerald-400/70 mt-0.5">Cleared & verified</div>
+          <div className="text-[10px] text-emerald-400/80 mt-0.5">Cleared & verified</div>
         </div>
       </div>
 
       {/* Main Map Container */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
+      <div className="bg-[#0d1527] border border-cyan-500/20 rounded-[28px] p-6 shadow-2xl space-y-4 backdrop-blur-md">
         {loading ? (
           <div className="h-[550px] flex items-center justify-center text-slate-400 text-sm">
             Loading interactive geospatial maps...

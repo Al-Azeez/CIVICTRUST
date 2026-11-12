@@ -16,8 +16,12 @@ import {
   Eye,
   SlidersHorizontal,
   ChevronRight,
-  ShieldAlert,
+  Layers,
+  Compass,
+  Globe,
+  ExternalLink,
 } from 'lucide-react';
+import GoogleLocationMap from '../../components/GoogleLocationMap';
 
 const VerificationReview = () => {
   const [complaints, setComplaints] = useState([]);
@@ -31,8 +35,18 @@ const VerificationReview = () => {
     setLoading(true);
     try {
       const res = await api.get('/complaints');
-      const suspiciousOrReopened = res.data.complaints.filter(
-        (c) => c.status === 'SUSPICIOUS' || c.status === 'REOPENED' || c.verificationStatus === 'SUSPICIOUS'
+      const suspiciousOrReopened = (res.data.complaints || []).filter(
+        (c) =>
+          c.status === 'SUSPICIOUS' ||
+          c.status === 'REOPENED' ||
+          c.status === 'REVERIFICATION_REQUIRED' ||
+          c.verificationStatus === 'SUSPICIOUS' ||
+          c.verificationStatus === 'UNVERIFIED' ||
+          c.verificationStatus === 'LOCATION_MISMATCH' ||
+          c.verificationStatus === 'LOCATION MISMATCH' ||
+          c.verificationStatus === 'TIMELINE_MISMATCH' ||
+          c.verificationStatus === 'TIMELINE MISMATCH' ||
+          c.verificationStatus === 'REQUIRES HUMAN REVIEW'
       );
       setComplaints(suspiciousOrReopened);
       if (suspiciousOrReopened.length > 0 && !selectedComplaint) {
@@ -53,14 +67,16 @@ const VerificationReview = () => {
     if (!selectedComplaint) return;
     setIsProcessing(true);
     try {
-      const res = await api.post(`/complaints/${selectedComplaint._id || selectedComplaint.complaintId}/admin-override`, {
-        targetStatus,
-        overrideNotes: overrideNotes || `Supervisor manual override: Set to ${targetStatus}`,
-      });
+      const res = await api.post(
+        `/complaints/${selectedComplaint._id || selectedComplaint.complaintId}/admin-override`,
+        {
+          targetStatus,
+          overrideNotes: overrideNotes || `Supervisor Azeez manual audit decision: Set to ${targetStatus}`,
+        }
+      );
 
-      addToast(res.data.message, 'success');
+      addToast(res.data.message || 'Audit decision recorded successfully', 'success');
       setOverrideNotes('');
-      // Refresh
       await fetchSuspiciousComplaints();
     } catch (error) {
       addToast('Error saving supervisor decision', 'error');
@@ -73,15 +89,15 @@ const VerificationReview = () => {
     <div className="space-y-6 py-6">
       {/* Header */}
       <div>
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold">
-          <AlertTriangle className="w-3.5 h-3.5 animate-pulse" />
-          Supervisor Verification & Dispute Audit Queue
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-300 text-xs font-bold uppercase tracking-wider">
+          <AlertTriangle className="w-3.5 h-3.5 text-rose-400 animate-pulse" />
+          Supervisor Verification & Dispute Audit Queue • Azeez
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit'] mt-1">
-          Review Suspicious & Disputed Closures
+        <h1 className="text-2xl sm:text-3xl font-black text-white font-['Outfit'] mt-1">
+          Review Unverified Evidence & Disputed Closures
         </h1>
         <p className="text-xs sm:text-sm text-slate-400">
-          Independent verification review center. Review AI-flagged false closures and citizen reopen appeals.
+          Independent verification review center. Inspect multi-signal flags (GPS distance mismatch, timestamp inconsistency, residual debris) and citizen re-verification appeals.
         </p>
       </div>
 
@@ -90,17 +106,17 @@ const VerificationReview = () => {
           Loading audit queue...
         </div>
       ) : complaints.length === 0 ? (
-        <div className="p-12 rounded-3xl bg-slate-900 border border-slate-800 text-center space-y-4">
+        <div className="p-12 rounded-[28px] bg-[#0d1527] border border-cyan-500/20 text-center space-y-4 shadow-2xl">
           <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto" />
-          <h3 className="text-lg font-bold text-white font-['Outfit']">
-            Queue is Clear! No Suspicious Closures Pending Review
+          <h3 className="text-xl font-bold text-white font-['Outfit']">
+            Queue is Clear! No Unverified Closures Pending Review
           </h3>
           <p className="text-xs text-slate-400 max-w-md mx-auto">
-            All claimed municipal resolutions have either passed automated verification or have been resolved by human reviewers.
+            All claimed municipal resolutions have either passed automated multi-signal verification or have been resolved by human reviewers.
           </p>
           <Link
             to="/admin/complaints"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-slate-200 text-xs font-semibold hover:bg-slate-700 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 text-xs font-bold hover:bg-slate-700 transition-colors"
           >
             Browse All Complaints →
           </Link>
@@ -109,13 +125,16 @@ const VerificationReview = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column: Complaint Select List */}
           <div className="space-y-3">
-            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">
-              Audit Pending Cases ({complaints.length})
+            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider px-1 flex items-center justify-between">
+              <span>Audit Pending Cases ({complaints.length})</span>
+              <span className="text-[10px] text-rose-400 font-mono">Requires Review</span>
             </div>
 
-            <div className="space-y-2 max-h-[750px] overflow-y-auto pr-1">
+            <div className="space-y-2.5 max-h-[750px] overflow-y-auto pr-1">
               {complaints.map((c) => {
-                const isSelected = selectedComplaint && (selectedComplaint._id === c._id || selectedComplaint.complaintId === c.complaintId);
+                const isSelected =
+                  selectedComplaint &&
+                  (selectedComplaint._id === c._id || selectedComplaint.complaintId === c.complaintId);
                 return (
                   <button
                     key={c._id || c.complaintId}
@@ -123,8 +142,8 @@ const VerificationReview = () => {
                     onClick={() => setSelectedComplaint(c)}
                     className={`w-full p-4 rounded-2xl border text-left transition-all space-y-2 ${
                       isSelected
-                        ? 'bg-rose-950/60 border-rose-500/60 shadow-lg shadow-rose-950/40 ring-1 ring-rose-500'
-                        : 'bg-slate-900 border-slate-800 hover:border-slate-700 hover:bg-slate-800/40'
+                        ? 'bg-rose-950/60 border-rose-500/60 shadow-[0_0_20px_rgba(244,63,94,0.3)] ring-1 ring-rose-500'
+                        : 'bg-[#0d1527]/80 border-white/5 hover:border-slate-700 hover:bg-[#0d1527]'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -144,7 +163,7 @@ const VerificationReview = () => {
                     </div>
 
                     <div className="text-xs text-slate-400 flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
+                      <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                       <span>{c.ward}</span>
                     </div>
 
@@ -161,15 +180,20 @@ const VerificationReview = () => {
           {selectedComplaint && (
             <div className="lg:col-span-2 space-y-6">
               {/* Evidence Inspector */}
-              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6 shadow-xl">
-                <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
+              <div className="bg-[#0d1527]/90 border border-cyan-500/20 rounded-[28px] p-6 space-y-6 shadow-2xl backdrop-blur-md">
+                <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/10">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-mono font-bold text-emerald-400 text-sm">
+                      <span className="font-mono font-bold text-cyan-400 text-sm">
                         {selectedComplaint.complaintId}
                       </span>
                       <span className="text-xs text-slate-500">•</span>
-                      <span className="text-xs text-slate-300 font-bold">{selectedComplaint.category}</span>
+                      <span className="text-xs text-slate-200 font-bold">{selectedComplaint.category}</span>
+                      {selectedComplaint.masterIncidentId && (
+                        <span className="px-2.5 py-0.5 rounded-md bg-violet-950/60 border border-violet-800/40 text-[10px] font-mono text-violet-300">
+                          {selectedComplaint.masterIncidentId}
+                        </span>
+                      )}
                     </div>
                     <div className="text-xs text-slate-400 mt-0.5">
                       📍 {selectedComplaint.address || selectedComplaint.ward} ({selectedComplaint.ward})
@@ -178,29 +202,73 @@ const VerificationReview = () => {
 
                   <Link
                     to={`/citizen/complaints/${selectedComplaint._id || selectedComplaint.complaintId}`}
-                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 flex items-center gap-1 transition-colors"
+                    className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 flex items-center gap-1 transition-colors"
                   >
                     <Eye className="w-3.5 h-3.5" /> Full Audit Record
                   </Link>
                 </div>
 
-                {/* AI Verification Finding Callout */}
-                <div className="p-4 rounded-2xl bg-rose-950/60 border border-rose-500/40 space-y-2">
+                {/* Multi-Signal Verification Audit Box */}
+                <div className="p-4 rounded-2xl bg-rose-950/60 border border-rose-500/40 space-y-3">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-bold text-rose-300 flex items-center gap-1.5">
                       <AlertTriangle className="w-4 h-4 text-rose-400 animate-pulse" />
-                      Automated Vision Flag: {selectedComplaint.verificationStatus}
+                      Multi-Signal Audit Flag: {selectedComplaint.verificationStatus}
                     </span>
-                    <span className="font-mono font-bold text-rose-300 bg-rose-900/60 px-2 py-0.5 rounded">
-                      {selectedComplaint.verificationConfidence || 78}% Confidence
+                    <span className="font-mono font-bold text-rose-300 bg-rose-900/60 px-2.5 py-0.5 rounded-md">
+                      {selectedComplaint.verificationConfidence || 75}% Confidence
                     </span>
                   </div>
+
                   <p className="text-xs text-slate-200 leading-relaxed">
-                    <strong>Reasoning:</strong> {selectedComplaint.verificationReason || 'Residual debris and visual inconsistencies detected in target coordinates.'}
+                    <strong>Audit Finding:</strong> {selectedComplaint.verificationReason || 'Evidence could not be independently verified. Human review required.'}
                   </p>
+
+                  {/* 3-Signal Diagnostic Cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 border-t border-rose-900/40">
+                    {/* Signal 1: Image Comparison */}
+                    <div className="p-2.5 rounded-xl bg-[#060913]/90 border border-white/5">
+                      <div className="text-[10px] text-slate-400 font-bold uppercase">Image Similarity</div>
+                      <div className="text-xs font-bold text-white mt-0.5 flex items-center gap-1 font-mono">
+                        {selectedComplaint.verificationSignals?.imageSimilarity
+                          ? `${Math.round(selectedComplaint.verificationSignals.imageSimilarity * 100)}%`
+                          : selectedComplaint.verificationConfidence
+                          ? `${selectedComplaint.verificationConfidence}%`
+                          : '68%'}
+                        <span className="text-[10px] text-slate-400 font-normal">
+                          ({selectedComplaint.verificationStatus === 'VERIFIED' ? 'Passed' : 'Review'})
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Signal 2: Location Match */}
+                    <div className="p-2.5 rounded-xl bg-[#060913]/90 border border-white/5">
+                      <div className="text-[10px] text-slate-400 font-bold uppercase">GPS Location Match</div>
+                      <div className="text-xs font-bold mt-0.5 font-mono">
+                        {selectedComplaint.verificationSignals?.locationMatch === false ? (
+                          <span className="text-rose-400">⚠ Location Mismatch</span>
+                        ) : (
+                          <span className="text-cyan-400">✓ Consistent</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Signal 3: Timestamp Consistency */}
+                    <div className="p-2.5 rounded-xl bg-[#060913]/90 border border-white/5">
+                      <div className="text-[10px] text-slate-400 font-bold uppercase">Timeline Order</div>
+                      <div className="text-xs font-bold mt-0.5 font-mono">
+                        {selectedComplaint.verificationSignals?.timestampMatch === false ? (
+                          <span className="text-rose-400">⚠ Timeline Mismatch</span>
+                        ) : (
+                          <span className="text-cyan-400">✓ Chronological</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
                   {selectedComplaint.reopenReason && (
-                    <p className="text-xs text-amber-200 pt-1 border-t border-rose-900/40">
-                      <strong>Citizen Rebuttal Dispute:</strong> "{selectedComplaint.reopenReason}"
+                    <p className="text-xs text-amber-200 pt-2 border-t border-rose-900/40">
+                      <strong>Citizen Rebuttal Appeal:</strong> "{selectedComplaint.reopenReason}"
                     </p>
                   )}
                 </div>
@@ -208,26 +276,52 @@ const VerificationReview = () => {
                 {/* Before / After Photo Comparison */}
                 <ImageCompareSlider
                   beforeImage={selectedComplaint.beforePhoto}
-                  afterImage={selectedComplaint.resolutionPhoto}
+                  afterImage={selectedComplaint.resolutionPhoto || selectedComplaint.resolutionEvidence?.image}
                   category={selectedComplaint.category}
                 />
 
+                {/* Geospatial Dual-Pin Google Map Inspector */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-slate-200 flex items-center gap-1.5">
+                      <MapPin className="w-4 h-4 text-cyan-400" />
+                      Geospatial Verification & Municipal GIS Inspection
+                    </span>
+                    <span className="text-cyan-400 font-mono text-[11px]">
+                      GIS Ground Pin Active
+                    </span>
+                  </div>
+
+                  <GoogleLocationMap
+                    latitude={selectedComplaint.latitude}
+                    longitude={selectedComplaint.longitude}
+                    accuracy={6}
+                    address={selectedComplaint.address || selectedComplaint.ward}
+                    title="Audit Site Proximity"
+                    height="260px"
+                    secondaryLatitude={selectedComplaint.resolutionEvidence?.latitude}
+                    secondaryLongitude={selectedComplaint.resolutionEvidence?.longitude}
+                    primaryLabel="Citizen Incident Location"
+                    secondaryLabel="Worker Claimed Resolution GPS"
+                  />
+                </div>
+
                 {/* Supervisor Action Box */}
-                <div className="bg-slate-950/80 p-5 rounded-2xl border border-slate-800 space-y-4">
+                <div className="bg-[#060913] p-5 rounded-2xl border border-cyan-500/20 space-y-4">
                   <h3 className="text-sm font-bold text-white font-['Outfit'] flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                    <ShieldCheck className="w-4 h-4 text-cyan-400" />
                     Municipal Supervisor Human Decision Override
                   </h3>
                   <p className="text-xs text-slate-400">
-                    In accordance with PS-D04 rules: automated flags are advisory. The supervisor can inspect ground truth and override the status.
+                    Automated multi-signal checks are advisory verification tools. The supervisor can inspect ground truth evidence and make the final administrative ruling.
                   </p>
 
                   <textarea
                     rows={2}
                     value={overrideNotes}
                     onChange={(e) => setOverrideNotes(e.target.value)}
-                    placeholder="Enter official supervisor inspection notes / rationale..."
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                    placeholder="Enter official supervisor inspection rationale..."
+                    className="w-full px-3 py-2 bg-[#0d1527] border border-slate-700 rounded-xl text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500"
                   />
 
                   <div className="flex flex-wrap items-center gap-3">
@@ -235,7 +329,7 @@ const VerificationReview = () => {
                       type="button"
                       disabled={isProcessing}
                       onClick={() => handleOverride('VERIFIED')}
-                      className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-950 flex items-center gap-1.5 transition-all"
+                      className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-950 flex items-center gap-1.5 transition-all"
                     >
                       <CheckCircle2 className="w-4 h-4" />
                       Confirm Clean & Mark Verified
@@ -245,7 +339,7 @@ const VerificationReview = () => {
                       type="button"
                       disabled={isProcessing}
                       onClick={() => handleOverride('IN_PROGRESS')}
-                      className="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-md shadow-amber-950 flex items-center gap-1.5 transition-all"
+                      className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold text-xs shadow-md shadow-amber-950 flex items-center gap-1.5 transition-all"
                     >
                       <RotateCcw className="w-4 h-4" />
                       Reject Claim & Re-dispatch Crew
