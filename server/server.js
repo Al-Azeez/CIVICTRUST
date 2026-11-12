@@ -58,6 +58,11 @@ const corsOptions = {
     'OPTIONS'
   ],
 
+  allowedHeaders: [
+        'Content-Type',
+        'Authorization'
+  ],
+
   optionsSuccessStatus: 204
 };
 
