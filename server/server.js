@@ -1,9 +1,8 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const dotenv = require('dotenv');
-
-dotenv.config();
 
 const { connectDB, getIsMemoryMode, getMemoryStore } = require('./config/db');
 const User = require('./models/User');
@@ -18,8 +17,52 @@ const analyticsRoutes = require('./routes/analytics');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
+// ==========================================
+// CORS CONFIGURATION
+// ==========================================
+
+const allowedOrigins = [
+  'https://civic-trust2-frontend.vercel.app',
+  'http://localhost:3121',
+  ...(process.env.CLIENT_URL || '')
+    .split(',')
+    .map(origin => origin.trim().replace(/\/$/, ''))
+    .filter(Boolean)
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+
+    // Allow requests without an origin (Postman, curl)
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    console.log('Blocked CORS origin:', origin);
+
+    return callback(null, false);
+  },
+
+  credentials: true,
+
+  methods: [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS'
+  ],
+
+  optionsSuccessStatus: 204
+};
+
+// Apply CORS before API routes
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
@@ -30,7 +73,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const seedDatabase = async () => {
   try {
     const seed = await createSyntheticData();
-    
+
     if (getIsMemoryMode()) {
       const store = getMemoryStore();
       store.users = [...seed.users];

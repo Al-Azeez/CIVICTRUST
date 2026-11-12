@@ -1,36 +1,25 @@
-import axios from 'axios';
+import axios from "axios";
+
+// Deployed backend URL on Vercel. Falls back to the local Vite proxy in development.
+const API_URL = import.meta.env.VITE_API_URL || "/api";
+
+if (!import.meta.env.VITE_API_URL) {
+  console.warn("VITE_API_URL is not set. API requests will go to the frontend domain.");
+}
 
 const api = axios.create({
-  baseURL: '/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: API_URL,
+  headers: { "Content-Type": "application/json" },
 });
 
-// Request interceptor to attach JWT token
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('civictrust_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// Response interceptor to handle unauth
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      // Don't auto-redirect if checking auth
-      if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register') && window.location.pathname !== '/') {
-        // localStorage.removeItem('civictrust_token');
-      }
-    }
-    return Promise.reject(error);
+// Attach the saved login token to every request
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-);
+  return config;
+});
 
+export { api };
 export default api;
