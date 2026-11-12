@@ -2,7 +2,11 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { getIsMemoryMode, getMemoryStore } = require('../config/db');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'civictrust_hackathon_super_secret_jwt_key_2026';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET || !JWT_SECRET.trim()) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
 
 const protect = async (req, res, next) => {
   let token;

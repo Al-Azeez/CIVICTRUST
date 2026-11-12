@@ -14,7 +14,7 @@ const api = axios.create({
 
 // Attach the saved login token to every request
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("civictrust_token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

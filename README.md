@@ -22,7 +22,9 @@ cd client
 npm install
 npm run dev
 ```
-*Frontend runs on `http://localhost:5173` with full API proxying.*
+*Frontend runs on `http://localhost:3121` and proxies API requests to the backend at `http://localhost:5000`.*
+
+For deployment, set `JWT_SECRET` and `MONGODB_URI` in the backend environment. Set the backend Vercel project's root directory to `server`; the frontend production build uses `https://civic-trust2-server.vercel.app/api`.
 
 ---
 

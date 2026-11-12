@@ -20,54 +20,40 @@ const PORT = process.env.PORT || 5000;
 // ==========================================
 // CORS CONFIGURATION
 // ==========================================
-
-const allowedOrigins = [
+const normalizeOrigin = (origin) => origin.trim().replace(/\/+$/, '');
+const allowedOrigins = new Set([
   'https://civic-trust2-frontend.vercel.app',
   'http://localhost:3121',
   ...(process.env.CLIENT_URL || '')
     .split(',')
-    .map(origin => origin.trim().replace(/\/$/, ''))
-    .filter(Boolean)
-];
+    .map(normalizeOrigin)
+    .filter(Boolean),
+].map(normalizeOrigin));
 
 const corsOptions = {
   origin: (origin, callback) => {
-
-    // Allow requests without an origin (Postman, curl)
     if (!origin) {
       return callback(null, true);
     }
 
-    if (allowedOrigins.includes(origin)) {
+    const normalizedOrigin = normalizeOrigin(origin);
+    if (allowedOrigins.has(normalizedOrigin)) {
+      console.log('Allowed CORS origin:', normalizedOrigin);
       return callback(null, true);
     }
 
-    console.log('Blocked CORS origin:', origin);
-
+    console.log('Blocked CORS origin:', normalizedOrigin);
     return callback(null, false);
   },
-
   credentials: true,
-
-  methods: [
-    'GET',
-    'POST',
-    'PUT',
-    'PATCH',
-    'DELETE',
-    'OPTIONS'
-  ],
-
-  allowedHeaders: [
-        'Content-Type',
-        'Authorization'
-  ],
-
-  optionsSuccessStatus: 204
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 204,
 };
 
 // Apply CORS before API routes
 app.use(cors(corsOptions));
+
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
